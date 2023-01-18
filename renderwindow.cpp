@@ -13,6 +13,10 @@
 #include "shader.h"
 #include "mainwindow.h"
 #include "logger.h"
+#include "xyz.h"
+#include "trianglesurface.h"
+#include "surfaceo1.h"
+
 
 RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     : mContext(nullptr), mInitialized(false), mMainWindow(mainWindow)
@@ -30,22 +34,23 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
         mContext = nullptr;
         qDebug() << "Context could not be made - quitting this application";
     }
-
-    //This is the matrix used to transform (rotate) the triangle
-    //You could do without, but then you have to simplify the shader and shader setup
-    mMVPmatrix = new QMatrix4x4{};
-    mMVPmatrix->setToIdentity();    //1, 1, 1, 1 in the diagonal of the matrix
+    mPmatrix = new QMatrix4x4();
+    mVmatrix = new QMatrix4x4();
+    mPmatrix->setToIdentity();
+    mVmatrix->setToIdentity();
+    //mPmatrix->perspective(60, 4.0/3.0, 0.1, 10.0);
 
     //Make the gameloop timer:
     mRenderTimer = new QTimer(this);
 
+    //mObjects.push_back(new XYZ());
+    //mObjects.push_back(new TriangleSurface());
+    mObjects.push_back(new SurfaceO1());
 }
 
 RenderWindow::~RenderWindow()
 {
-    //cleans up the GPU memory
-    glDeleteVertexArrays( 1, &mVAO );
-    glDeleteBuffers( 1, &mVBO );
+
 }
 
 // Sets up the general OpenGL stuff and the buffers needed to render a triangle
@@ -103,24 +108,15 @@ void RenderWindow::init()
     // (out of the build-folder) and then up into the project folder.
     mShaderProgram = new Shader("../3Dprog22/plainshader.vert", "../3Dprog22/plainshader.frag");
 
-    //********************** Making the object to be drawn **********************
-
-    //Making and using the Vertex Array Object - VAO
-    //VAO is a containter that holds VBOs
-    glGenVertexArrays( 1, &mVAO );
-    glBindVertexArray( mVAO );
-
-    //Making and using the Vertex Buffer Object to hold vertices - VBO
-    //Since the mVAO is bound, this VBO will belong to that VAO
-    glGenBuffers( 1, &mVBO );
-    glBindBuffer( GL_ARRAY_BUFFER, mVBO );
-
-    xyz.init(mVAO, mVBO);
-
     // Get the matrixUniform location from the shader
     // This has to match the "matrix" variable name in the vertex shader
     // The uniform is used in the render() function to send the model matrix to the shader
     mMatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "matrix" );
+    mPMatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "pmatrix" );
+    mVMatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "vmatrix" );
+
+    for (auto it=mObjects.begin(); it!= mObjects.end(); it++)
+        (*it)->init(mMatrixUniform);
 
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
 }
@@ -129,51 +125,21 @@ void RenderWindow::init()
 void RenderWindow::render()
 {
     mTimeStart.restart(); //restart FPS clock
-    mContext->makeCurrent(this); //must be called every frame (every time mContext->swapBuffers is called)
-
-    initializeOpenGLFunctions();    //must call this every frame it seems...
-
-    //clear the screen for each redraw
+    mContext->makeCurrent(this);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    //what shader to use
     glUseProgram(mShaderProgram->getProgram() );
 
-    //what object to draw
-    glBindVertexArray( mVAO );
 
-    //Since our shader uses a matrix and we rotate the triangle, we send the current matrix here
-    //Must be here to update each frame - if static object, it could be set only once
-    glUniformMatrix4fv( mMatrixUniform, //the location of the matrix in the shader
-                        1,              //count
-                        GL_FALSE,       //transpose the matrix before sending it?
-                        mMVPmatrix->constData());   //the data of the matrix
+    glUniformMatrix4fv( mPMatrixUniform, 1, GL_FALSE, mPmatrix->constData());
+    glUniformMatrix4fv( mVMatrixUniform, 1, GL_FALSE, mVmatrix->constData());
 
-    //actual draw call
-    xyz.draw();
+    for (auto it=mObjects.begin(); it!= mObjects.end(); it++)
+        (*it)->draw();
 
-
-    //glDrawArrays(GL_LINES, 0, mVertices.size());
-    //glDrawArrays(GL_LINE_STRIP, 0, mVertices.size());
-    //glDrawArrays(GL_LINE_LOOP, 0, mVertices.size());
-
-    //Calculate framerate before
-    // checkForGLerrors() because that call takes a long time
-    // and before swapBuffers(), else it will show the vsync time
     calculateFramerate();
-
-    //using our expanded OpenGL debugger to check if everything is OK.
-    checkForGLerrors();
-
-    //Qt require us to call this swapBuffers() -function.
-    // swapInterval is 1 by default which means that swapBuffers() will (hopefully) block
-    // and wait for vsync.
     mContext->swapBuffers(this);
 
-    //just to make the triangle rotate - tweak this:
-    //                   degree, x,   y,   z -axis
-    if(mRotate)
-        mMVPmatrix->rotate(2.f, 0.f, 1.0, 0.f);
+
 }
 
 //This function is called from Qt when window is exposed (shown)
@@ -287,6 +253,8 @@ void RenderWindow::startOpenGLDebugger()
                 mLogger->logText("Started Qt OpenGL debug logger");
         }
     }
+
+
 }
 
 //Event sent from Qt when program receives a keyPress
@@ -307,4 +275,53 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
 //    {
 //        mMainWindow->statusBar()->showMessage(" SSSS");
 //    }
+
+
+    if (event->key() == Qt::Key_W)
+    {
+        mVmatrix->translate(0, -0.1f, 0);
+    }
+    if (event->key() == Qt::Key_S)
+    {
+        mVmatrix->translate(0, 0.1f, 0);
+    }
+    if (event->key() == Qt::Key_A)
+    {
+        mVmatrix->translate(0.1f, 0, 0);
+    }
+    if (event->key() == Qt::Key_D)
+    {
+        mVmatrix->translate(-0.1f, 0, 0);
+    }
+    if (event->key() == Qt::Key_D)
+    {
+        mVmatrix->translate(-0.1f, 0, 0);
+    }
+
+
+    if (event->key() == Qt::Key_Q)
+    {
+        mPmatrix->rotate(5,10,0,0);
+    }
+
+    if (event->key() == Qt::Key_E)
+    {
+        mPmatrix->rotate(5,-10,0,0);
+    }
+    if (event->key() == Qt::Key_R)
+    {
+        mPmatrix->rotate(5,0,10,0);
+    }
+    if (event->key() == Qt::Key_F)
+    {
+        mPmatrix->rotate(5,0,-10,0);
+    }
+    if (event->key() == Qt::Key_T)
+    {
+        mPmatrix->rotate(5,0,0,10);
+    }
+    if (event->key() == Qt::Key_G)
+    {
+        mPmatrix->rotate(5,0,0,-10);
+    }
 }

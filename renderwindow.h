@@ -6,8 +6,7 @@
 #include <QTimer>
 #include <QElapsedTimer>
 #include <vector>
-#include "Vertex0.h"
-#include "xyz.h"
+#include "visualobject.h"
 
 class QOpenGLContext;
 class Shader;
@@ -40,19 +39,22 @@ private:
     bool mInitialized{false};
 
     Shader *mShaderProgram{nullptr};    //holds pointer the GLSL shader program
-    GLint  mMatrixUniform;              //OpenGL reference to the Uniform in the shader program
 
-    GLuint mVAO;                        //OpenGL reference to our VAO
-    GLuint mVBO;                        //OpenGL reference to our VBO
 
-    QMatrix4x4 *mMVPmatrix{nullptr};         //The matrix with the transform for the object we draw
+    QMatrix4x4 *mPmatrix{nullptr};         // Camera
+    QMatrix4x4 *mVmatrix{nullptr};         // Camera
+
+     GLint  mPMatrixUniform;                // Camera
+     GLint  mVMatrixUniform;                // Camera
+     GLint  mMatrixUniform;                 //OpenGL reference to the Uniform in the shader program
+
 
     QTimer *mRenderTimer{nullptr};           //timer that drives the gameloop
     QElapsedTimer mTimeStart;               //time variable that reads the calculated FPS
 
     MainWindow *mMainWindow{nullptr};        //points back to MainWindow to be able to put info in StatusBar
 
-    XYZ xyz;
+    std::vector<VisualObject*> mObjects;
 
     class QOpenGLDebugLogger *mOpenGLDebugLogger{nullptr};  //helper class to get some clean debug info from OpenGL
     class Logger *mLogger{nullptr};         //logger - Output Log in the application

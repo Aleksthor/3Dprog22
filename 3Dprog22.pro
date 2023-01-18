@@ -10,14 +10,22 @@ SOURCES += main.cpp \
     mainwindow.cpp \
     renderwindow.cpp \
     shader.cpp \
+    surfaceo1.cpp \
+    trianglesurface.cpp \
+    vertex.cpp \
+    visualobject.cpp \
     xyz.cpp
 
 HEADERS += \
-    Vertex0.h \
+    Structures.h \
     logger.h \
     mainwindow.h \
     renderwindow.h \
     shader.h \
+    surfaceo1.h \
+    trianglesurface.h \
+    vertex.h \
+    visualobject.h \
     xyz.h
 
 FORMS += \
