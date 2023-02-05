@@ -1,28 +1,46 @@
-#include "trianglesurface.h"
+#include "curveo1.h"
+#include <fstream>
 
-TriangleSurface::TriangleSurface() : VisualObject()
+CurveO1::CurveO1() : VisualObject()
 {
-    //                x    y     z   r g b
-    Vertex v0{0.0,0.0,0.0, 1,0,0};    mVertices.push_back(v0);
-    Vertex v1(0.5,0.0,0.0, 0,1,0);    mVertices.push_back(v1);
-    Vertex v2{0.5,0.5,0.0, 0,0,1};    mVertices.push_back(v2);
-    Vertex v3{0.0,0.0,0.0, 0,0,1};    mVertices.push_back(v3);
-    Vertex v4{0.5,0.5,0.0, 0,1,0};    mVertices.push_back(v4);
-    Vertex v5{0.0,0.5,0.0, 1,0,0};    mVertices.push_back(v5);
+    float n = 100;
+    float a = 0;
+    float b = 10;
+
+    float h = (b-a)/n;
+
+    for (auto x = a; x < b; x += h)
+    {
+        float y = f(x);
+        mVertices.push_back(Vertex(Position(x,y,0), Color(abs(x),abs(y),0)));
+    }
+
+    // Write mesh to file
+    std::fstream data;
+    data.open("CurveO1.txt",  std::fstream::in | std::fstream::out | std::fstream::trunc);
+
+    data << mVertices.size() << std::endl << std::endl;
+
+    for(size_t i = 0; i < mVertices.size(); i++)
+    {
+        data << mVertices[i] << std::endl;
+        std::cout << std::endl;
+    }
+
+    data.close();
+
 }
 
-TriangleSurface::TriangleSurface(std::string filnavn) : VisualObject()
+CurveO1::CurveO1(std::string string)
 {
-   readFile(filnavn);
+   readFile(string);
+}
+CurveO1::~CurveO1()
+{
+
 }
 
-TriangleSurface::~TriangleSurface()
-{
-
-}
-
-
-void TriangleSurface::readFile(std::string filnavn) {
+void CurveO1::readFile(std::string filnavn) {
    std::ifstream inn;
    inn.open(filnavn.c_str());
 
@@ -39,8 +57,12 @@ void TriangleSurface::readFile(std::string filnavn) {
    }
 }
 
+float CurveO1::f(float x)
+{
+    return (-0.5f * x * x * x) + (3 * x * x) - (3 * x);
+}
 
-void TriangleSurface::init(GLint matrixUniform)
+void CurveO1::init(GLint matrixUniform)
 {
    mMatrixUniform = matrixUniform;
 
@@ -71,12 +93,12 @@ void TriangleSurface::init(GLint matrixUniform)
    glBindVertexArray(0);
 }
 
-void TriangleSurface::draw()
+void CurveO1::draw()
 {
    glBindVertexArray( mVAO );
    glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
-   glDrawArrays(GL_TRIANGLES, 0, mVertices.size());
+   glDrawArrays(GL_LINE_STRIP, 0, mVertices.size());
+
+
 
 }
-
-

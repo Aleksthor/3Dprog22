@@ -13,9 +13,16 @@
 #include "shader.h"
 #include "mainwindow.h"
 #include "logger.h"
+
+
+
 #include "xyz.h"
 #include "trianglesurface.h"
 #include "surfaceo1.h"
+#include "curveo1.h"
+#include "octahedron.h"
+#include "tetraeder.h"
+
 
 
 RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
@@ -34,18 +41,36 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
         mContext = nullptr;
         qDebug() << "Context could not be made - quitting this application";
     }
-    mPmatrix = new QMatrix4x4();
-    mVmatrix = new QMatrix4x4();
-    mPmatrix->setToIdentity();
-    mVmatrix->setToIdentity();
-    //mPmatrix->perspective(60, 4.0/3.0, 0.1, 10.0);
+
+    mCamera = new Camera();
+
 
     //Make the gameloop timer:
     mRenderTimer = new QTimer(this);
 
-    //mObjects.push_back(new XYZ());
+
+
+    // all hard coded objects
+
+    mObjects.push_back(new XYZ());
+    //mObjects.push_back(new SurfaceO1("SurfaceO1.txt"));
+    //mObjects.push_back(new CurveO1());
+    //mObjects.push_back(new TriangleSurface("Data.txt"));
+    //mObjects.push_back(new TriangleSurface("DataPoints.txt"));
+    //mObjects.push_back(new Octahedron(5));
+    //new Tetraeder(Position(0,1,0), Vector3(2,2,2)));
     //mObjects.push_back(new TriangleSurface());
-    mObjects.push_back(new SurfaceO1());
+    //mObjects.push_back(new Cube(Position(0,0,0), Color(1,0,0), Vector3(0.5f,0.5f,0.5f)));
+
+    //mObjects[1]->setPosition(0,0,-1.5f);
+    //mObjects[1]->rotate(90,Vector3::X);
+    //mObjects.push_back(new CurveO1());
+
+    mRotate = false;
+
+//    for (auto it = mObjects.begin(); it != mObjects.end(); it++)
+//        (*it)->setPosition(0,0,-2);
+    mTetraeder = new Tetraeder(Position::Origo, Vector3::One);
 }
 
 RenderWindow::~RenderWindow()
@@ -118,28 +143,84 @@ void RenderWindow::init()
     for (auto it=mObjects.begin(); it!= mObjects.end(); it++)
         (*it)->init(mMatrixUniform);
 
+    mTetraeder->init(mMatrixUniform);
+
+
+
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
 }
 
 // Called each frame - doing the rendering!!!
 void RenderWindow::render()
 {
+    mCamera->init(mPMatrixUniform, mVMatrixUniform);
+    mCamera->perspective(80, 4.0/3.0, 2, 10.0);
+    mCamera->translate(0,0,-4.f);
+
     mTimeStart.restart(); //restart FPS clock
+
+    input();
     mContext->makeCurrent(this);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glUseProgram(mShaderProgram->getProgram() );
 
-
-    glUniformMatrix4fv( mPMatrixUniform, 1, GL_FALSE, mPmatrix->constData());
-    glUniformMatrix4fv( mVMatrixUniform, 1, GL_FALSE, mVmatrix->constData());
+    mCamera->update();
 
     for (auto it=mObjects.begin(); it!= mObjects.end(); it++)
         (*it)->draw();
+
+    mTetraeder->draw();
 
     calculateFramerate();
     mContext->swapBuffers(this);
 
 
+}
+
+
+
+void RenderWindow::input()
+{
+    if (Keymap[Qt::Key_W] == true)
+    {
+        mTetraeder->move(0,0.05f,0);
+    }
+    if (Keymap[Qt::Key_S] == true)
+    {
+        mTetraeder->move(0,-0.05f,0);
+    }
+    if (Keymap[Qt::Key_A] == true)
+    {
+        mTetraeder->move(-0.05f,0,0);
+    }
+    if (Keymap[Qt::Key_D] == true)
+    {
+        mTetraeder->move(0.05f,0,0);
+    }
+
+    if (Keymap[Qt::Key_X] == true)
+    {
+        for (auto it = mObjects.begin(); it != mObjects.end(); it++)
+        {
+            (*it)->move(0,0,-0.05f);
+        }
+
+    }
+
+    if (Keymap[Qt::Key_Z] == true)
+    {
+        for (auto it = mObjects.begin(); it != mObjects.end(); it++)
+        {
+            (*it)->move(0,0,+0.05f);
+        }
+
+
+    }
+
+    if (mRotate)
+    {
+        mObjects[1]->rotate(1,QVector3D(1,0,0));
+    }
 }
 
 //This function is called from Qt when window is exposed (shown)
@@ -276,52 +357,61 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
 //        mMainWindow->statusBar()->showMessage(" SSSS");
 //    }
 
-
-    if (event->key() == Qt::Key_W)
+    if(event->key() == Qt::Key_W)
     {
-        mVmatrix->translate(0, -0.1f, 0);
+        Keymap[Qt::Key_W] = true;
     }
-    if (event->key() == Qt::Key_S)
+    if(event->key() == Qt::Key_S)
     {
-        mVmatrix->translate(0, 0.1f, 0);
+        Keymap[Qt::Key_S] = true;
     }
-    if (event->key() == Qt::Key_A)
+    if(event->key() == Qt::Key_A)
     {
-        mVmatrix->translate(0.1f, 0, 0);
+        Keymap[Qt::Key_A] = true;
     }
-    if (event->key() == Qt::Key_D)
+    if(event->key() == Qt::Key_D)
     {
-        mVmatrix->translate(-0.1f, 0, 0);
-    }
-    if (event->key() == Qt::Key_D)
-    {
-        mVmatrix->translate(-0.1f, 0, 0);
+        Keymap[Qt::Key_D] = true;
     }
 
-
-    if (event->key() == Qt::Key_Q)
+    if(event->key() == Qt::Key_Z)
     {
-        mPmatrix->rotate(5,10,0,0);
+        Keymap[Qt::Key_Z] = true;
+    }
+    if(event->key() == Qt::Key_X)
+    {
+        Keymap[Qt::Key_X] = true;
     }
 
-    if (event->key() == Qt::Key_E)
-    {
-        mPmatrix->rotate(5,-10,0,0);
-    }
-    if (event->key() == Qt::Key_R)
-    {
-        mPmatrix->rotate(5,0,10,0);
-    }
-    if (event->key() == Qt::Key_F)
-    {
-        mPmatrix->rotate(5,0,-10,0);
-    }
-    if (event->key() == Qt::Key_T)
-    {
-        mPmatrix->rotate(5,0,0,10);
-    }
-    if (event->key() == Qt::Key_G)
-    {
-        mPmatrix->rotate(5,0,0,-10);
-    }
+
 }
+
+ void RenderWindow::keyReleaseEvent(QKeyEvent *event)
+ {
+     if(event->key() == Qt::Key_W)
+     {
+         Keymap[Qt::Key_W] = false;
+     }
+     if(event->key() == Qt::Key_S)
+     {
+         Keymap[Qt::Key_S] = false;
+     }
+     if(event->key() == Qt::Key_A)
+     {
+         Keymap[Qt::Key_A] = false;
+     }
+     if(event->key() == Qt::Key_D)
+     {
+         Keymap[Qt::Key_D] = false;
+     }
+
+     if(event->key() == Qt::Key_Z)
+     {
+         Keymap[Qt::Key_Z] = false;
+     }
+     if(event->key() == Qt::Key_X)
+     {
+         Keymap[Qt::Key_X] = false;
+     }
+
+ }

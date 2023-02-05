@@ -1,13 +1,13 @@
 #include "xyz.h"
 
-XYZ::XYZ()
+XYZ::XYZ() : VisualObject()
 {
    mVertices.push_back(Vertex{0,0,0,1,0,0});
-   mVertices.push_back(Vertex{1,0,0,1,0,0});
+   mVertices.push_back(Vertex{2,0,0,1,0,0});
    mVertices.push_back(Vertex{0,0,0,0,1,0});
-   mVertices.push_back(Vertex{0,1,0,0,1,0});
+   mVertices.push_back(Vertex{0,2,0,0,1,0});
    mVertices.push_back(Vertex{0,0,0,0,0,1});
-   mVertices.push_back(Vertex{0,0,1,0,0,1});
+   mVertices.push_back(Vertex{0,0,2,0,0,1});
 }
 
 XYZ::~XYZ()

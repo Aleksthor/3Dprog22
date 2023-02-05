@@ -8,9 +8,14 @@ public:
    SurfaceO1();
    SurfaceO1(std::string filnavn);
    ~SurfaceO1() override;
+
+   float f(float x, float y);
    void readFile(std::string filnavn);
    void init(GLint shader) override;
    void draw() override;
+
+private:
+   float A;
 };
 
 #endif // SURFACEO1_H

@@ -57,6 +57,7 @@ public:
     void SetU(float u) { mUV.u = u; }
     void SetV(float v) { mUV.v = v; }
 
+
 private:
     Position mPosition;
     Color mColor;

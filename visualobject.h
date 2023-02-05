@@ -13,11 +13,18 @@ public:
    virtual ~VisualObject()=0;
    virtual void init(GLint matrixUniform)=0;
    virtual void draw()=0;
+
+   void move(float x, float y, float z);
+   void setPosition(float x, float y, float z);
+   void rotate(float angle, QVector3D vector);
+   void scale(float scale);
+
 protected:
    std::vector<Vertex> mVertices;
    GLuint mVAO{0};
    GLuint mVBO{0};
    GLint mMatrixUniform{0};
+
    QMatrix4x4 mMatrix;
 };
 

@@ -7,10 +7,18 @@
 #include <QElapsedTimer>
 #include <vector>
 #include "visualobject.h"
+#include "cube.h"
+#include "xyz.h"
+#include "camera.h"
 
 class QOpenGLContext;
 class Shader;
 class MainWindow;
+
+
+class Tetraeder;
+
+
 
 /// This inherits from QWindow to get access to the Qt functionality and
 // OpenGL surface.
@@ -29,25 +37,26 @@ public:
 
     bool mRotate{true};     //Check if triangle should rotate
 
+    inline static std::unordered_map<int,bool> Keymap;
+
 private slots:
     void render();          //the actual render - function
 
 private:
     void init();            //initialize things we need before rendering
+    void input();
 
     QOpenGLContext *mContext{nullptr};  //Our OpenGL context
     bool mInitialized{false};
 
     Shader *mShaderProgram{nullptr};    //holds pointer the GLSL shader program
 
-
-    QMatrix4x4 *mPmatrix{nullptr};         // Camera
-    QMatrix4x4 *mVmatrix{nullptr};         // Camera
-
-     GLint  mPMatrixUniform;                // Camera
-     GLint  mVMatrixUniform;                // Camera
-     GLint  mMatrixUniform;                 //OpenGL reference to the Uniform in the shader program
-
+    Tetraeder* mTetraeder;
+    XYZ* mXyz;
+    Camera* mCamera;
+    GLint  mMatrixUniform;                 //OpenGL reference to the Uniform in the shader program
+    GLint mPMatrixUniform;
+    GLint mVMatrixUniform;
 
     QTimer *mRenderTimer{nullptr};           //timer that drives the gameloop
     QElapsedTimer mTimeStart;               //time variable that reads the calculated FPS
@@ -76,7 +85,7 @@ protected:
     //    void mousePressEvent(QMouseEvent *event) override{}
     //    void mouseMoveEvent(QMouseEvent *event) override{}
     void keyPressEvent(QKeyEvent *event) override;              //the only one we use now
-    //    void keyReleaseEvent(QKeyEvent *event) override{}
+    void keyReleaseEvent(QKeyEvent *event) override;
     //    void wheelEvent(QWheelEvent *event) override{}
 };
 
