@@ -10,9 +10,9 @@ public:
     CurveO1(std::string string);
     ~CurveO1() override;
 
-    void readFile(std::string filnavn);
     void init(GLint matrixUniform) override;
     void draw() override;
+    void draw(QMatrix4x4& transformMatrix) override;
 
     float f(float x);
 };

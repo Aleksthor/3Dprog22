@@ -3,6 +3,7 @@
 
 CurveO1::CurveO1() : VisualObject()
 {
+
     float n = 100;
     float a = 0;
     float b = 10;
@@ -40,22 +41,7 @@ CurveO1::~CurveO1()
 
 }
 
-void CurveO1::readFile(std::string filnavn) {
-   std::ifstream inn;
-   inn.open(filnavn.c_str());
 
-   if (inn.is_open()) {
-       int n;
-       Vertex vertex;
-       inn >> n;
-       mVertices.reserve(n);
-       for (int i=0; i<n; i++) {
-            inn >> vertex;
-            mVertices.push_back(vertex);
-       }
-       inn.close();
-   }
-}
 
 float CurveO1::f(float x)
 {
@@ -95,10 +81,20 @@ void CurveO1::init(GLint matrixUniform)
 
 void CurveO1::draw()
 {
-   glBindVertexArray( mVAO );
-   glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
-   glDrawArrays(GL_LINE_STRIP, 0, mVertices.size());
-
-
-
+    if (isActive)
+    {
+        glBindVertexArray( mVAO );
+        glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
+        glDrawArrays(GL_LINE_STRIP, 0, mVertices.size());
+    }
+}
+void CurveO1::draw(QMatrix4x4& transformMatrix)
+{
+    if (isActive)
+    {
+        transformMatrix *= mMatrix;
+        glBindVertexArray( mVAO );
+        glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, transformMatrix.constData());
+        glDrawArrays(GL_LINE_STRIP, 0, mVertices.size());
+    }
 }

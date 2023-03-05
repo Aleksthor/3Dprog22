@@ -1,5 +1,10 @@
 #ifndef STRUCTURES_H
 #define STRUCTURES_H
+
+
+#include "qvectornd.h"
+
+
 class Vector3
 {
 public:
@@ -18,14 +23,54 @@ public:
     float y;
     float z;
 
+    friend inline Vector3 operator*(const Vector3& left, const Vector3& right);
+    friend inline Vector3 operator*(const Vector3& left, const float& right);
+    friend inline Vector3 operator+(const Vector3& left, const Vector3& right);
+    inline Vector3 operator+=(const Vector3& right)
+    {
+        this->x += right.x;
+        this->y += right.y;
+        this->z += right.z;
+
+        return *this;
+    }
+
     static const Vector3 X;
     static const Vector3 Y;
     static const Vector3 Z;
     static const Vector3 Zero;
     static const Vector3 One;
     static const Vector3 Two;
+
+
 };
 
+inline Vector3 operator*(const Vector3& left, const Vector3& right)
+{
+    Vector3 newMatrix = left;
+    newMatrix.x *= right.x;
+    newMatrix.y *= right.y;
+    newMatrix.z *= right.z;
+    return newMatrix;
+}
+
+inline Vector3 operator*(const Vector3& left, const float& right)
+{
+    Vector3 newMatrix = left;
+    newMatrix.x *= right;
+    newMatrix.y *= right;
+    newMatrix.z *= right;
+    return newMatrix;
+}
+
+inline Vector3 operator+(const Vector3& left, const Vector3& right)
+{
+    Vector3 newMatrix = left;
+    newMatrix.x += right.x;
+    newMatrix.y += right.y;
+    newMatrix.z += right.z;
+    return newMatrix;
+}
 class Vector4
 {
 public:
@@ -248,6 +293,34 @@ public:
     static const Color Green;
     static const Color Blue;
     static const Color Purple;
+    static const Color Orange;
+    static const Color White;
+
+
+    Color operator*=(const Color& color)
+    {
+        this->r *= color.r;
+        this->g *= color.g;
+        this->b *= color.b;
+
+        return *this;
+    }
+
+    Color operator*=(const float& factor)
+    {
+        this->r *= factor;
+        this->g *= factor;
+        this->b *= factor;
+
+        return *this;
+    }
+
+    Color operator*(const Color& color)
+    {
+        *this *= color;
+
+        return *this;
+    }
 
 };
 
@@ -273,10 +346,36 @@ public:
 };
 
 
+class Rotator
+{
+public:
+    Rotator()
+        : x(0), y(0), z(0)
+    {
+
+    }
+    Rotator(float _x, float _y, float _z)
+        : x(_x), y(_y), z(_z)
+    {
+
+    }
+
+    float x;
+    float y;
+    float z;
+};
 
 
+class Interp
+{
+public:
+    Interp(std::vector<QVector3D> _points);
 
+private:
+    std::vector<QVector3D> points;
+    std::vector<float> result;
 
+};
 
 
 

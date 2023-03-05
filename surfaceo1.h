@@ -13,6 +13,7 @@ public:
    void readFile(std::string filnavn);
    void init(GLint shader) override;
    void draw() override;
+   void draw(QMatrix4x4& transformMatrix) override;
 
 private:
    float A;

@@ -1,10 +1,12 @@
 #include "octahedron.h"
 #include "vertex.h"
+#include "spherecollider.h"
 
-Octahedron::Octahedron(int n) : m_rekursjoner(n), m_indeks(0), VisualObject()
+Octahedron::Octahedron(int n) : VisualObject(),
+     m_rekursjoner(n), m_indeks(0)
 {
-   mVertices.reserve(3 * 8 * pow(4, m_rekursjoner));
-   oktaederUnitBall();
+    mVertices.reserve(3 * 8 * pow(4, m_rekursjoner));
+    oktaederUnitBall();
 }
 
 Octahedron::~Octahedron()
@@ -92,7 +94,21 @@ void Octahedron::init(GLint matrixUniform)
 
 void Octahedron::draw()
 {
-   glBindVertexArray( mVAO );
-   glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
-   glDrawArrays(GL_TRIANGLES, 0, mVertices.size());//mVertices.size());
+    if (isActive)
+    {
+        glBindVertexArray( mVAO );
+        glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
+        glDrawArrays(GL_TRIANGLES, 0, mVertices.size());//mVertices.size());
+    }
 }
+void Octahedron::draw(QMatrix4x4& transformMatrix)
+{
+    if (isActive)
+    {
+        transformMatrix *= mMatrix;
+        glBindVertexArray( mVAO );
+        glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, transformMatrix.constData());
+        glDrawArrays(GL_TRIANGLES, 0, mVertices.size());
+    }
+}
+

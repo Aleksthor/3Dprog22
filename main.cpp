@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include <QApplication>
-#include "writefile.h"
 
 int main(int argc, char *argv[])
 {
@@ -16,8 +15,6 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
 
-    WriteFile file = WriteFile();
-    file.makeFile();
 
     return a.exec();
 }

@@ -4,13 +4,19 @@
 #include "visualobject.h"
 
 class Vertex;
+class SphereCollider;
+
 class Octahedron : public VisualObject
 {
 public:
    Octahedron(int n=0);
    ~Octahedron();
-   void init(GLint matrixUniform);
-   void draw();
+
+   SphereCollider* collider;
+
+   void init(GLint matrixUniform) override;
+   void draw() override;
+   void draw(QMatrix4x4& transformMatrix) override;
 
 private:
    int m_rekursjoner;

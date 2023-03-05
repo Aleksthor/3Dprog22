@@ -1,7 +1,7 @@
 #include "tetraeder.h"
 #include <cmath>
 
-Tetraeder::Tetraeder()
+Tetraeder::Tetraeder() : VisualObject()
 {
     Position A = Position(0,1,0);
     Position B = Position(0,0,1/sqrt(3));
@@ -11,7 +11,6 @@ Tetraeder::Tetraeder()
 
     Position C = Position(p1.x(),0,p1.y());
     Position D = Position(p2.x(),0,p2.y());
-
 
     // Lag Trekant 1
     mVertices.push_back(Vertex(B, Color::Red));
@@ -34,48 +33,7 @@ Tetraeder::Tetraeder()
     mVertices.push_back(Vertex(A, Color::Purple));
 }
 
-Tetraeder::Tetraeder(Position pos, Vector3 scale)
-{
-    Position A = Position(0,1,0);
 
-    Position B = Position(0,0,1/sqrt(3));
-
-    QVector2D p1 = rotatePoint(QVector2D(0,B.z), 4*M_PI/3);
-    QVector2D p2 = rotatePoint(QVector2D(0,B.z), 2*M_PI/3);
-
-    Position C = Position(p1.x(),0,p1.y());
-    Position D = Position(p2.x(),0,p2.y());
-
-    A *= scale;
-    B *= scale;
-    C *= scale;
-    D *= scale;
-
-    A += pos;
-    B += pos;
-    C += pos;
-    D += pos;
-
-    // Lag Trekant 1
-    mVertices.push_back(Vertex(B, Color::Red));
-    mVertices.push_back(Vertex(C, Color::Red));
-    mVertices.push_back(Vertex(D, Color::Red));
-
-    // Lag Trekant 2
-    mVertices.push_back(Vertex(B, Color::Blue));
-    mVertices.push_back(Vertex(C, Color::Blue));
-    mVertices.push_back(Vertex(A, Color::Blue));
-
-    // Lag Trekant 3
-    mVertices.push_back(Vertex(D, Color::Green));
-    mVertices.push_back(Vertex(B, Color::Green));
-    mVertices.push_back(Vertex(A, Color::Green));
-
-    // Lag Trekant 4
-    mVertices.push_back(Vertex(C, Color::Purple));
-    mVertices.push_back(Vertex(D, Color::Purple));
-    mVertices.push_back(Vertex(A, Color::Purple));
-}
 
 Tetraeder::~Tetraeder()
 {
@@ -115,10 +73,24 @@ void Tetraeder::init(GLint matrixUniform)
 
 void Tetraeder::draw()
 {
-    glBindVertexArray( mVAO );
-    glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
-    glDrawArrays(GL_TRIANGLES, 0, mVertices.size());
+    if (isActive)
+    {
+        glBindVertexArray( mVAO );
+        glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
+        glDrawArrays(GL_TRIANGLES, 0, mVertices.size());
+    }
 }
+void Tetraeder::draw(QMatrix4x4& transformMatrix)
+{
+    if (isActive)
+    {
+        transformMatrix *= mMatrix;
+        glBindVertexArray( mVAO );
+        glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, transformMatrix.constData());
+        glDrawArrays(GL_TRIANGLES, 0, mVertices.size());
+    }
+}
+
 
 QVector2D Tetraeder::rotatePoint(QVector2D point, float angle)
 {

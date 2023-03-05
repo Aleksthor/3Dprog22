@@ -22,22 +22,7 @@ TriangleSurface::~TriangleSurface()
 }
 
 
-void TriangleSurface::readFile(std::string filnavn) {
-   std::ifstream inn;
-   inn.open(filnavn.c_str());
 
-   if (inn.is_open()) {
-       int n;
-       Vertex vertex;
-       inn >> n;
-       mVertices.reserve(n);
-       for (int i=0; i<n; i++) {
-            inn >> vertex;
-            mVertices.push_back(vertex);
-       }
-       inn.close();
-   }
-}
 
 
 void TriangleSurface::init(GLint matrixUniform)
@@ -73,10 +58,23 @@ void TriangleSurface::init(GLint matrixUniform)
 
 void TriangleSurface::draw()
 {
-   glBindVertexArray( mVAO );
-   glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
-   glDrawArrays(GL_TRIANGLES, 0, mVertices.size());
+    if (isActive)
+    {
+        glBindVertexArray( mVAO );
+        glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
+        glDrawArrays(GL_TRIANGLES, 0, mVertices.size());
+    }
 
+}
+void TriangleSurface::draw(QMatrix4x4& transformMatrix)
+{
+    if (isActive)
+    {
+        transformMatrix *= mMatrix;
+        glBindVertexArray( mVAO );
+        glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, transformMatrix.constData());
+        glDrawArrays(GL_TRIANGLES, 0, mVertices.size());
+    }
 }
 
 

@@ -3,16 +3,20 @@
 
 #include "visualobject.h"
 
+class Landscape;
+
+class SphereCollider;
+
 class Cube : public VisualObject
 {
 public:
    Cube();
-   Cube(Position position, Color color, Vector3 scale);
    ~Cube() override;
 
-   void readFile(std::string filnavn);
    void init(GLint matrixUniform) override;
    void draw() override;
+   void draw(QMatrix4x4& transformMatrix) override;
+
 
 };
 

@@ -1,7 +1,11 @@
 #include "Structures.h"
+#include "qgenericmatrix.h"
 
 # define M_PI           3.14159265358979323846  /* pi */
 #include <cmath>
+
+
+
 
 Matrix4x4::Matrix4x4()
 {
@@ -50,15 +54,15 @@ void Matrix4x4::rotate(float angle, const Vector3& vector)
     float radian = (angle * M_PI) / 180.f;
     if (vector.x != 0)
     {
-        *this = Matrix4x4::createRotationX(radian) * *this;
+        *this = *this * Matrix4x4::createRotationX(radian) ;
     }
     if (vector.y != 0)
     {
-       *this = Matrix4x4::createRotationY(radian) * *this;
+       *this = *this * Matrix4x4::createRotationY(radian);
     }
     if (vector.z != 0)
     {
-        *this = Matrix4x4::createRotationZ(radian) * *this;
+        *this = *this * Matrix4x4::createRotationZ(radian) ;
     }
 
 }
@@ -158,8 +162,6 @@ Matrix4x4 Matrix4x4::createRotationZ(float angle)
     return newMatrix;
 }
 
-
-
 const Position Position::Origo(0,0,0);
 
 const Vector3 Vector3::X(1,0,0);
@@ -175,3 +177,18 @@ const Color Color::Red(1,0,0);
 const Color Color::Green(0,1,0);
 const Color Color::Blue(0,0,1);
 const Color Color::Purple(1,0,1);
+const Color Color::Orange(1,0.6f,0);
+const Color Color::White(1,1,1);
+
+
+
+Interp::Interp(std::vector<QVector3D> _points)
+
+    :   points(_points)
+{
+    int n = points.size() / sizeof(QVector3D);
+
+
+}
+
+

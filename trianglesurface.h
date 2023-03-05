@@ -11,10 +11,10 @@ public:
    TriangleSurface(std::string filnavn);
    ~TriangleSurface() override;
 
-   void readFile(std::string filnavn);
-   void init(GLint shader) override;
-   void draw() override;
 
+   void init(GLint matrixUniform) override;
+   void draw() override;
+   void draw(QMatrix4x4& transformMatrix) override;
 
 };
 

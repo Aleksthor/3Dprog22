@@ -7,10 +7,10 @@ class Tetraeder : public VisualObject
 {
 public:
     Tetraeder();
-    Tetraeder(Position pos, Vector3 scale);
-    virtual ~Tetraeder();
-    virtual void init(GLint matrixUniform);
-    virtual void draw();
+    ~Tetraeder() override;
+    void init(GLint matrixUniform) override;
+    void draw() override;
+    void draw(QMatrix4x4& transformMatrix) override;
 
 private:
     QVector2D rotatePoint(QVector2D point, float angle);

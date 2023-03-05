@@ -48,10 +48,20 @@ void XYZ::init(GLint matrixUniform)
 
 void XYZ::draw()
 {
-   glBindVertexArray( mVAO );
-   glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
-   glDrawArrays(GL_LINES, 0, mVertices.size());
+   if (isActive)
+   {
+       glBindVertexArray( mVAO );
+       glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
+       glDrawArrays(GL_LINES, 0, mVertices.size());
+   }
 
-
-
+}
+void XYZ::draw(QMatrix4x4& transformMatrix)
+{
+    if (isActive)
+    {
+        glBindVertexArray( mVAO );
+        glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, transformMatrix.constData());
+        glDrawArrays(GL_LINES, 0, mVertices.size());
+    }
 }

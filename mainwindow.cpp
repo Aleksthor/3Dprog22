@@ -10,6 +10,7 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow)
 {
+
     //this sets up what's in the mainwindow.ui - the GUI
     ui->setupUi(this);
     init(); //initializes parts of the program
@@ -75,20 +76,7 @@ void MainWindow::init()
     Logger::getInstance()->setMainWindow(this);;
 }
 
-//Example of a slot called from the button on the top of the program.
-void MainWindow::on_rotationButton_toggled(bool checked)
-{
-    if(checked)
-    {
-        mRenderWindow->mRotate = true;
-        ui->rotationButton->setText("Stop rotation");
-    }
-    else
-    {
-        mRenderWindow->mRotate = false;
-        ui->rotationButton->setText("Start rotation");
-    }
-}
+
 
 //File menu Exit closes the program
 void MainWindow::on_fileExit_triggered()

@@ -22,13 +22,34 @@
 #include "curveo1.h"
 #include "octahedron.h"
 #include "tetraeder.h"
+#include "disc.h"
+#include "parabel.h"
+#include "landscape.h"
+#include "house.h"
+#include "movers.h"
+#include "gameobject.h"
+#include "player.h"
+#include "pickups.h"
+#include "door.h"
+#include "visualobjectcomponent.h"
+#include "physicscomponent.h"
+#include "scene.h"
+#include "basicmesh.h"
+#include "npco2.h"
 
+RenderWindow* RenderWindow::instance;
 
 
 RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     : mContext(nullptr), mInitialized(false), mMainWindow(mainWindow)
 
 {
+
+    if (instance == nullptr)
+    {
+        instance = this;
+    }
+
     //This is sent to QWindow:
     setSurfaceType(QWindow::OpenGLSurface);
     setFormat(format);
@@ -42,9 +63,6 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
         qDebug() << "Context could not be made - quitting this application";
     }
 
-    mCamera = new Camera();
-
-
     //Make the gameloop timer:
     mRenderTimer = new QTimer(this);
 
@@ -52,32 +70,91 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
 
     // all hard coded objects
 
-    mObjects.push_back(new XYZ());
-    //mObjects.push_back(new SurfaceO1("SurfaceO1.txt"));
-    //mObjects.push_back(new CurveO1());
-    //mObjects.push_back(new TriangleSurface("Data.txt"));
-    //mObjects.push_back(new TriangleSurface("DataPoints.txt"));
-    //mObjects.push_back(new Octahedron(5));
-    //new Tetraeder(Position(0,1,0), Vector3(2,2,2)));
-    //mObjects.push_back(new TriangleSurface());
-    //mObjects.push_back(new Cube(Position(0,0,0), Color(1,0,0), Vector3(0.5f,0.5f,0.5f)));
+    player = new Player();
+    player->scale(0.3f);
 
-    //mObjects[1]->setPosition(0,0,-1.5f);
-    //mObjects[1]->rotate(90,Vector3::X);
-    //mObjects.push_back(new CurveO1());
+    scene1 = new Scene();
+    scene2 = new Scene();
+    scene3 = new Scene();
 
-    mRotate = false;
 
-//    for (auto it = mObjects.begin(); it != mObjects.end(); it++)
-//        (*it)->setPosition(0,0,-2);
-    mTetraeder = new Tetraeder(Position::Origo, Vector3::One);
+    // Add objects to scenes
+    scene1->addObject(new BasicMesh(new XYZ(), "XYZ"), "XYZ");
+    scene2->addObject(new BasicMesh(new XYZ(), "XYZ"), "XYZ");
+    scene3->addObject(new BasicMesh(new XYZ(), "XYZ"), "XYZ");
+
+
+
+    scene1->addObject(player, "Player");
+    scene1->addObject(new BasicMesh(new Landscape(QVector2D(-10,-10), QVector2D(10,10)), "Landscape"), "Landscape");
+    GameObject* house = scene1->addObject(new BasicMesh(new House(), "House"), "House");
+    scene1->addObject(new NPCO2(), "NPC");
+    scene1->addObject(new BasicMesh(new Parabel(), "Parabel"), "Parabel");
+    scene1->addObject(new Door(), "Door");
+    scene1->getCamera()->setFollowGameObject(player);
+
+    for (int i{}; i < 10; i++)
+    {
+
+        GameObject* pickup = scene1->addObject(new Pickups(), "Pickup" + std::to_string(i));
+
+        float angle = std::rand() % 361;
+        float radians = angle * (M_PI / 180.f);
+        float magnitude = (float)(std::rand() % 100) / 20.f;
+
+        magnitude += 5;
+
+        QVector3D randomPos = QVector3D();
+        randomPos.setX(cos(radians));
+        randomPos.setY(sin(radians));
+        randomPos *= magnitude;
+
+        pickup->setPosition(randomPos);
+    }
+
+    scene2->addObject(player, "Player");
+    scene2->addObject(new BasicMesh(new Landscape(QVector2D(-10,-10), QVector2D(10,10)), "Landscape"), "Landscape");
+    scene2->getCamera()->setFollowGameObject(player);
+
+    GameObject* wall1 = scene2->addObject(new BasicMesh(new Cube(), "Wall1"), "Wall1");
+    GameObject* wall2 = scene2->addObject(new BasicMesh(new Cube(), "Wall2"), "Wall2");
+    GameObject* wall3 = scene2->addObject(new BasicMesh(new Cube(), "Wall3"), "Wall3");
+    GameObject* wall4 = scene2->addObject(new BasicMesh(new Cube(), "Wall4"), "Wall4");
+
+    wall1->setPosition(0,10,0);
+    wall1->scale(QVector3D(10,0.1f,10));
+
+    wall2->setPosition(0,-10,0);
+    wall2->scale(QVector3D(10,0.1f,10));
+
+    wall3->setPosition(10,0,0);
+    wall3->scale(QVector3D(0.1f,10,10));
+
+    wall4->setPosition(-10,0,0);
+    wall4->scale(QVector3D(0.1f,10,10));
+
+
+    for (int i{}; i < 3; i++)
+    {
+        scene3->addObject(new Movers(), "Mover" + std::to_string(i));
+    }
+    scene3->addObject(new Movers(QVector3D(0,0,0)), "Sun");
+
+
+    house->setPosition(QVector3D(0,-10,3));
+    house->rotate(180,QVector3D(0,0,1));
+    house->scale(3);
+
+
+    currentScene = scene1;
+
+
 }
 
 RenderWindow::~RenderWindow()
 {
 
 }
-
 // Sets up the general OpenGL stuff and the buffers needed to render a triangle
 void RenderWindow::init()
 {
@@ -140,12 +217,15 @@ void RenderWindow::init()
     mPMatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "pmatrix" );
     mVMatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "vmatrix" );
 
-    for (auto it=mObjects.begin(); it!= mObjects.end(); it++)
-        (*it)->init(mMatrixUniform);
+    scene1->init();
+    scene2->init();
+    scene3->init();
 
-    mTetraeder->init(mMatrixUniform);
-
-
+    GameObject* sun = scene3->getObject("Sun");
+    sun->getPhysicsComponent()->setUsingGravitationalAttraction(false);
+    sun->getPhysicsComponent()->setVelocity(QVector3D(0,0,0));
+    sun->getPhysicsComponent()->setMass(500);
+    sun->transform->scale(2);
 
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
 }
@@ -153,23 +233,20 @@ void RenderWindow::init()
 // Called each frame - doing the rendering!!!
 void RenderWindow::render()
 {
-    mCamera->init(mPMatrixUniform, mVMatrixUniform);
-    mCamera->perspective(80, 4.0/3.0, 2, 10.0);
-    mCamera->translate(0,0,-4.f);
 
     mTimeStart.restart(); //restart FPS clock
+    //mLogger->logText("");
 
-    input();
     mContext->makeCurrent(this);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glUseProgram(mShaderProgram->getProgram() );
 
-    mCamera->update();
 
-    for (auto it=mObjects.begin(); it!= mObjects.end(); it++)
-        (*it)->draw();
+    input();
 
-    mTetraeder->draw();
+    if (currentScene != nullptr)
+        currentScene->update();
+
 
     calculateFramerate();
     mContext->swapBuffers(this);
@@ -181,47 +258,76 @@ void RenderWindow::render()
 
 void RenderWindow::input()
 {
+    // Camera
     if (Keymap[Qt::Key_W] == true)
     {
-        mTetraeder->move(0,0.05f,0);
+        currentScene->getCamera()->translate(0.1f,0,0);
     }
     if (Keymap[Qt::Key_S] == true)
     {
-        mTetraeder->move(0,-0.05f,0);
+        currentScene->getCamera()->translate(-0.1f,0,0);
     }
     if (Keymap[Qt::Key_A] == true)
     {
-        mTetraeder->move(-0.05f,0,0);
+        currentScene->getCamera()->translate(0,-0.1f,0);
     }
     if (Keymap[Qt::Key_D] == true)
     {
-        mTetraeder->move(0.05f,0,0);
+        currentScene->getCamera()->translate(0,0.1f,0);
     }
-
-    if (Keymap[Qt::Key_X] == true)
+    if (Keymap[Qt::Key_R] == true)
     {
-        for (auto it = mObjects.begin(); it != mObjects.end(); it++)
-        {
-            (*it)->move(0,0,-0.05f);
-        }
-
+        currentScene->getCamera()->translate(0,0,0.1f);
     }
-
+    if (Keymap[Qt::Key_F] == true)
+    {
+        currentScene->getCamera()->translate(0,0,-0.1f);
+    }
     if (Keymap[Qt::Key_Z] == true)
     {
-        for (auto it = mObjects.begin(); it != mObjects.end(); it++)
-        {
-            (*it)->move(0,0,+0.05f);
-        }
-
 
     }
-
-    if (mRotate)
+    if (Keymap[Qt::Key_X] == true)
     {
-        mObjects[1]->rotate(1,QVector3D(1,0,0));
+
     }
+
+
+
+    if (Keymap[Qt::Key_Up] == true)
+    {
+
+    }
+    if (Keymap[Qt::Key_Down] == true)
+    {
+
+    }
+    if (Keymap[Qt::Key_Right] == true)
+    {
+
+    }
+    if (Keymap[Qt::Key_Left] == true)
+    {
+
+    }
+
+    if (Keymap[Qt::Key_1] == true)
+    {
+        changeScene(1);
+    }
+    if (Keymap[Qt::Key_2] == true)
+    {
+        changeScene(2);
+    }
+    if(Keymap[Qt::Key_3])
+    {
+        changeScene(3);
+    }
+
+
 }
+
+
 
 //This function is called from Qt when window is exposed (shown)
 // and when it is resized
@@ -247,6 +353,26 @@ void RenderWindow::exposeEvent(QExposeEvent *)
         mRenderTimer->start(16);
         mTimeStart.start();
     }
+}
+
+
+void RenderWindow::changeScene(int scene)
+{
+    switch(scene)
+    {
+    case 1:
+        currentScene = scene1;
+        break;
+    case 2:
+        currentScene = scene2;
+        break;
+    case 3:
+        currentScene = scene3;
+        break;
+    default:
+        break;
+    }
+
 }
 
 //The way this function is set up is that we start the clock before doing the draw call,
@@ -338,6 +464,40 @@ void RenderWindow::startOpenGLDebugger()
 
 }
 
+void RenderWindow::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::MouseButton(1))
+    {
+        Keymap[Qt::MouseButton(1)] = true;
+    }
+
+}
+
+void RenderWindow::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::MouseButton(1))
+    {
+        Keymap[Qt::MouseButton(1)] = false;
+    }
+}
+
+void RenderWindow::mouseMoveEvent(QMouseEvent *event)
+{
+    if (Keymap[Qt::MouseButton(1)] == true)
+    {
+        float xDelta = event->pos().x() - mousePos.x();
+        xDelta /= 10;
+
+        float yDelta = mousePos.y() - event->pos().y();
+        yDelta /= 10;
+
+        currentScene->getCamera()->rotate(-yDelta, -xDelta, 0);
+    }
+
+    mousePos = QVector2D(event->pos().x(), event->pos().y());
+
+}
+
 //Event sent from Qt when program receives a keyPress
 // NB - see renderwindow.h for signatures on keyRelease and mouse input
 void RenderWindow::keyPressEvent(QKeyEvent *event)
@@ -382,7 +542,65 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
     {
         Keymap[Qt::Key_X] = true;
     }
+    if(event->key() == Qt::Key_R)
+    {
+        Keymap[Qt::Key_R] = true;
+    }
+    if(event->key() == Qt::Key_F)
+    {
+        Keymap[Qt::Key_F] = true;
+    }   
+    if(event->key() == Qt::Key_E)
+    {
+        Keymap[Qt::Key_E] = true;
+    }
+    if(event->key() == Qt::Key_Q)
+    {
+        Keymap[Qt::Key_Q] = true;
+    }
 
+    if(event->key() == Qt::Key_1)
+    {
+        Keymap[Qt::Key_1] = true;
+    }
+    if(event->key() == Qt::Key_2)
+    {
+        Keymap[Qt::Key_2] = true;
+    }
+    if(event->key() == Qt::Key_3)
+    {
+        Keymap[Qt::Key_3] = true;
+    }
+    if(event->key() == Qt::Key_4)
+    {
+        Keymap[Qt::Key_4] = true;
+    }
+    if(event->key() == Qt::Key_5)
+    {
+        Keymap[Qt::Key_5] = true;
+    }
+    if(event->key() == Qt::Key_6)
+    {
+        Keymap[Qt::Key_6] = true;
+    }
+
+
+    if(event->key() == Qt::Key_Up)
+    {
+        Keymap[Qt::Key_Up] = true;
+    }
+    if(event->key() == Qt::Key_Down)
+    {
+        Keymap[Qt::Key_Down] = true;
+    }
+    if(event->key() == Qt::Key_Right)
+    {
+        Keymap[Qt::Key_Right] = true;
+    }
+    if(event->key() == Qt::Key_Left)
+    {
+        Keymap[Qt::Key_Left] = true;
+    }
 
 }
 
@@ -413,5 +631,70 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
      {
          Keymap[Qt::Key_X] = false;
      }
+     if(event->key() == Qt::Key_1)
+     {
+         Keymap[Qt::Key_1] = false;
+     }
+     if(event->key() == Qt::Key_2)
+     {
+         Keymap[Qt::Key_2] = false;
+     }
+     if(event->key() == Qt::Key_3)
+     {
+         Keymap[Qt::Key_3] = false;
+     }
+     if(event->key() == Qt::Key_4)
+     {
+         Keymap[Qt::Key_4] = false;
+     }
+     if(event->key() == Qt::Key_5)
+     {
+         Keymap[Qt::Key_5] = false;
+     }
+     if(event->key() == Qt::Key_6)
+     {
+         Keymap[Qt::Key_6] = false;
+     }
+     if(event->key() == Qt::Key_R)
+     {
+         Keymap[Qt::Key_R] = false;
+     }
+     if(event->key() == Qt::Key_F)
+     {
+         Keymap[Qt::Key_F] = false;
+     }
+     if(event->key() == Qt::Key_E)
+     {
+         Keymap[Qt::Key_E] = false;
+     }
+     if(event->key() == Qt::Key_Q)
+     {
+         Keymap[Qt::Key_Q] = false;
+     }
 
+
+     if(event->key() == Qt::Key_Up)
+     {
+         Keymap[Qt::Key_Up] = false;
+     }
+     if(event->key() == Qt::Key_Down)
+     {
+         Keymap[Qt::Key_Down] = false;
+     }
+     if(event->key() == Qt::Key_Right)
+     {
+         Keymap[Qt::Key_Right] = false;
+     }
+     if(event->key() == Qt::Key_Left)
+     {
+         Keymap[Qt::Key_Left] = false;
+     }
  }
+
+ void RenderWindow::resizeEvent(QResizeEvent *)
+ {
+    scene1->refreshCamera();
+    scene2->refreshCamera();
+    scene3->refreshCamera();
+ }
+
