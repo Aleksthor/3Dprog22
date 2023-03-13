@@ -14,6 +14,7 @@ public:
    Camera();
    ~Camera() { }
    void init(GLint pMatrixUniform, GLint vMatrixUniform);
+   void bind(GLint pMatrixUniform, GLint vMatrixUniform);
    void perspective(int degrees, double aspect, double nearplane, double farplane);
    void lookAt(const QVector3D& eye, const QVector3D& at, const QVector3D& up);
    void update();
@@ -40,6 +41,7 @@ private:
    QVector3D mUp;
    QMatrix4x4 mPmatrix{};
    QMatrix4x4 mVmatrix{};
+   float mYaw;
 
    GameObject* follow;
 };

@@ -15,7 +15,7 @@ public:
     VisualObjectComponent* Mesh;
 
     void awake() override;
-    void update() override;
+    void update(float deltaTime) override;
 
 private:
     float NPCX;

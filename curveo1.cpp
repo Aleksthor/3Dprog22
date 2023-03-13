@@ -88,7 +88,7 @@ void CurveO1::draw()
         glDrawArrays(GL_LINE_STRIP, 0, mVertices.size());
     }
 }
-void CurveO1::draw(QMatrix4x4& transformMatrix)
+void CurveO1::draw(QMatrix4x4 transformMatrix)
 {
     if (isActive)
     {

@@ -10,7 +10,7 @@ public:
     ~Tetraeder() override;
     void init(GLint matrixUniform) override;
     void draw() override;
-    void draw(QMatrix4x4& transformMatrix) override;
+    void draw(QMatrix4x4 transformMatrix) override;
 
 private:
     QVector2D rotatePoint(QVector2D point, float angle);

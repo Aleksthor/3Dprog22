@@ -23,6 +23,7 @@ SOURCES += main.cpp \
     logger.cpp \
     mainwindow.cpp \
     movers.cpp \
+    neuralnetwork.cpp \
     npco2.cpp \
     octahedron.cpp \
     parabel.cpp \
@@ -40,6 +41,7 @@ SOURCES += main.cpp \
     spherecollider.cpp \
     surfaceo1.cpp \
     tetraeder.cpp \
+    texture.cpp \
     transform.cpp \
     trianglesurface.cpp \
     vertex.cpp \
@@ -66,6 +68,8 @@ HEADERS += \
     logger.h \
     mainwindow.h \
     movers.h \
+    neuralnetwork.h \
+    neuron.h \
     npco2.h \
     octahedron.h \
     parabel.h \
@@ -81,10 +85,13 @@ HEADERS += \
     scene.h \
     shader.h \
     spherecollider.h \
+    stb_image.h \
     surfaceo1.h \
     tetraeder.h \
+    texture.h \
     transform.h \
     trianglesurface.h \
+    uniforms.h \
     vertex.h \
     visualobject.h \
     visualobjectcomponent.h \
@@ -96,4 +103,6 @@ FORMS += \
 
 DISTFILES += \
     plainshader.frag \
-    plainshader.vert
+    plainshader.vert \
+    textureshader.frag \
+    textureshader.vert

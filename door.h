@@ -16,7 +16,7 @@ public:
     SphereCollider* Collider;
 
     void awake() override;
-    void update() override;
+    void update(float deltaTime) override;
     void collission(GameObject* other) override;
 
 private:

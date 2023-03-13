@@ -87,7 +87,7 @@ void Disc::draw()
         glDrawElements(GL_TRIANGLE_FAN, mVertices.size(), GL_UNSIGNED_INT, reinterpret_cast<const void*>(0));//mVertices.size());
     }
 }
-void Disc::draw(QMatrix4x4& transformMatrix)
+void Disc::draw(QMatrix4x4 transformMatrix)
 {
     if (isActive)
     {

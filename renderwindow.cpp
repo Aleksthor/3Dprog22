@@ -36,6 +36,9 @@
 #include "scene.h"
 #include "basicmesh.h"
 #include "npco2.h"
+#include "neuralnetwork.h"
+#include "texture.h"
+
 
 RenderWindow* RenderWindow::instance;
 
@@ -71,12 +74,13 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     // all hard coded objects
 
     player = new Player();
-    player->scale(0.3f);
+
 
     scene1 = new Scene();
     scene2 = new Scene();
     scene3 = new Scene();
-
+    neuralNetworkScene = new Scene();
+    neuralNetworkScene->addObject(new NeuralNetwork(), "Network");
 
     // Add objects to scenes
     scene1->addObject(new BasicMesh(new XYZ(), "XYZ"), "XYZ");
@@ -84,6 +88,18 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     scene3->addObject(new BasicMesh(new XYZ(), "XYZ"), "XYZ");
 
 
+    neuralNetworkScene->addObject(new BasicMesh(new XYZ(), "XYZ"), "XYZ");
+
+
+
+    BasicMesh* TextureSurface = new BasicMesh(new TriangleSurface(), "TextureSurface", "TextureShader");
+    TextureSurface->Mesh->setTexture(new Texture("../3Dprog22/image.png", TextureSurface->Mesh));
+    neuralNetworkScene->addObject(TextureSurface, "TextureSurface");
+    neuralNetworkScene->getObject("TextureSurface")->move(QVector3D(5,0,0));
+    neuralNetworkScene->getObject("TextureSurface")->rotate(90,QVector3D(0,1,0));
+    neuralNetworkScene->getObject("TextureSurface")->rotate(270,QVector3D(0,0,1));
+    neuralNetworkScene->getObject("TextureSurface")->rotate(180,QVector3D(0,1,0));
+    neuralNetworkScene->getObject("TextureSurface")->scale(3);
 
     scene1->addObject(player, "Player");
     scene1->addObject(new BasicMesh(new Landscape(QVector2D(-10,-10), QVector2D(10,10)), "Landscape"), "Landscape");
@@ -112,7 +128,6 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
         pickup->setPosition(randomPos);
     }
 
-    scene2->addObject(player, "Player");
     scene2->addObject(new BasicMesh(new Landscape(QVector2D(-10,-10), QVector2D(10,10)), "Landscape"), "Landscape");
     scene2->getCamera()->setFollowGameObject(player);
 
@@ -146,8 +161,7 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     house->scale(3);
 
 
-    currentScene = scene1;
-
+    currentScene = neuralNetworkScene;
 
 }
 
@@ -204,22 +218,17 @@ void RenderWindow::init()
     //    glEnable(GL_CULL_FACE);       //draws only front side of models - usually what you want - test it out!
     glClearColor(0.4f, 0.4f, 0.4f, 1.0f);    //gray color used in glClear GL_COLOR_BUFFER_BIT
 
-    //Compile shaders:
-    //NB: hardcoded path to files! You have to change this if you change directories for the project.
-    //Qt makes a build-folder besides the project folder. That is why we go down one directory
-    // (out of the build-folder) and then up into the project folder.
-    mShaderProgram = new Shader("../3Dprog22/plainshader.vert", "../3Dprog22/plainshader.frag");
 
-    // Get the matrixUniform location from the shader
-    // This has to match the "matrix" variable name in the vertex shader
-    // The uniform is used in the render() function to send the model matrix to the shader
-    mMatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "matrix" );
-    mPMatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "pmatrix" );
-    mVMatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "vmatrix" );
+
+
 
     scene1->init();
     scene2->init();
     scene3->init();
+    neuralNetworkScene->init();
+
+    scene3->getCamera()->lookAt(QVector3D(50,0,50), QVector3D(0,0,0), QVector3D(0,0,1));
+    neuralNetworkScene->getCamera()->lookAt(QVector3D(15,0,0), QVector3D(0,0,0), QVector3D(0,0,1));
 
     GameObject* sun = scene3->getObject("Sun");
     sun->getPhysicsComponent()->setUsingGravitationalAttraction(false);
@@ -234,23 +243,19 @@ void RenderWindow::init()
 void RenderWindow::render()
 {
 
-    mTimeStart.restart(); //restart FPS clock
-    //mLogger->logText("");
-
     mContext->makeCurrent(this);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glUseProgram(mShaderProgram->getProgram() );
-
 
     input();
-
     if (currentScene != nullptr)
+    {
         currentScene->update();
-
+    }
 
     calculateFramerate();
-    mContext->swapBuffers(this);
+    mTimeStart.restart();
 
+    mContext->swapBuffers(this);
 
 }
 
@@ -696,5 +701,6 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
     scene1->refreshCamera();
     scene2->refreshCamera();
     scene3->refreshCamera();
+    neuralNetworkScene->refreshCamera();
  }
 

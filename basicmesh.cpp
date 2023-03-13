@@ -2,9 +2,15 @@
 #include "visualobject.h"
 #include "visualobjectcomponent.h"
 
-BasicMesh::BasicMesh(VisualObject *Object, std::string name)
+BasicMesh::BasicMesh(VisualObject *Object, std::string name) : GameObject()
 {
-    Mesh = new VisualObjectComponent(Object, this);
+    Mesh = new VisualObjectComponent(Object, this,"PlainShader");
+    setRootComponent(Mesh);
+    setName(name);
+}
+BasicMesh::BasicMesh(VisualObject *Object, std::string name, std::string shader) : GameObject()
+{
+    Mesh = new VisualObjectComponent(Object, this,shader);
     setRootComponent(Mesh);
     setName(name);
 }
@@ -19,7 +25,7 @@ void BasicMesh::awake()
     GameObject::awake();
 }
 
-void BasicMesh::update()
+void BasicMesh::update(float deltaTime)
 {
-    GameObject::update();
+    GameObject::update(deltaTime);
 }

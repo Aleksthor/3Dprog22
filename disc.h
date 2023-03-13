@@ -14,7 +14,7 @@ public:
 
    void init(GLint matrixUniform) override;
    void draw() override;
-   void draw(QMatrix4x4& transformMatrix) override;
+   void draw(QMatrix4x4 transformMatrix) override;
    void construct();
 
 protected:

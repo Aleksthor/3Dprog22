@@ -56,7 +56,7 @@ void XYZ::draw()
    }
 
 }
-void XYZ::draw(QMatrix4x4& transformMatrix)
+void XYZ::draw(QMatrix4x4 transformMatrix)
 {
     if (isActive)
     {

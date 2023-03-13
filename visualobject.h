@@ -16,7 +16,7 @@ public:
     virtual ~VisualObject()=0;
     virtual void init(GLint matrixUniform)=0;
     virtual void draw()=0;
-    virtual void draw(QMatrix4x4& transformMatrix) = 0;
+    virtual void draw(QMatrix4x4 transformMatrix) = 0;
 
     void readFile(std::string filename, bool Indexing = false);
     void writeFile(std::string filename, bool Indexing = false);
@@ -31,6 +31,8 @@ public:
     void scale(QVector3D scale);
     std::pair<float,float> getPosition();
     QVector3D getPosition3D();
+
+    void setColor(Color color);
 
 
 protected:

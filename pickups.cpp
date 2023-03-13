@@ -4,13 +4,17 @@
 #include "spherecollider.h"
 #include "logger.h"
 
-Pickups::Pickups()
+Pickups::Pickups() : GameObject()
 {
-    Mesh = new VisualObjectComponent(new Octahedron(5), this);
+    Mesh = new VisualObjectComponent(new Octahedron(5), this,"PlainShader");
     setRootComponent(Mesh);
+
+
     Collider = new SphereCollider(this, 1);
     Collider->setupAttachment(Mesh);
-    setName("Pickups1");
+    Collider->setRenderOutline(true);
+
+    setName("Pickup");
 }
 
 Pickups::~Pickups()
@@ -21,11 +25,12 @@ Pickups::~Pickups()
 void Pickups::awake()
 {
     GameObject::awake();
+    //Mesh->getObject()->scale(QVector3D(0.5f,0.5f,0.5f));
 }
 
-void Pickups::update()
+void Pickups::update(float deltaTime)
 {
-    GameObject::update();
+    GameObject::update(deltaTime);
 }
 
 void Pickups::collission(GameObject *other)

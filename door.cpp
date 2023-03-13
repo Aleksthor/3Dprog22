@@ -6,9 +6,9 @@
 #include "renderwindow.h"
 
 
-Door::Door()
+Door::Door() : GameObject()
 {
-    Mesh = new VisualObjectComponent(new Cube(), this);
+    Mesh = new VisualObjectComponent(new Cube(), this, "PlainShader");
     setRootComponent(Mesh);
     transform->scale(QVector3D(1.f,0.1f,2.f));
 
@@ -34,9 +34,9 @@ void Door::awake()
     GameObject::awake();
 }
 
-void Door::update()
+void Door::update(float deltaTime)
 {
-    GameObject::update();
+    GameObject::update(deltaTime);
 
     if (openDoor)
     {

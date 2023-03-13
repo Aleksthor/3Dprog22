@@ -4,6 +4,8 @@
 #include "collider.h"
 #include <QVector3D>
 
+class VisualObject;
+
 class SphereCollider : public Collider
 {
 public:
@@ -16,6 +18,12 @@ public:
 
     float radius;
     QVector3D offset;
+
+    void setRenderOutline(bool input) { renderOutline = input; }
+
+private:
+    bool renderOutline;
+    VisualObject* outline;
 };
 
 #endif // SPHERECOLLIDER_H

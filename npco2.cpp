@@ -3,11 +3,11 @@
 #include "tetraeder.h"
 #include "parabel.h"
 
-NPCO2::NPCO2()
+NPCO2::NPCO2() : GameObject()
 {
     setName("NPC");
 
-    Mesh = new VisualObjectComponent(new Tetraeder(), this);
+    Mesh = new VisualObjectComponent(new Tetraeder(), this,"PlainShader");
     setRootComponent(Mesh);
 
     parabel = new Parabel();
@@ -29,9 +29,9 @@ void NPCO2::awake()
     GameObject::awake();
 }
 
-void NPCO2::update()
+void NPCO2::update(float deltaTime)
 {
-    GameObject::update();
+    GameObject::update(deltaTime);
     transform->setPosition(QVector3D(0,0,0));
 
     if (NPCdirection)

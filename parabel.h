@@ -12,7 +12,7 @@ public:
 
     void init(GLint matrixUniform) override;
     void draw() override;
-    void draw(QMatrix4x4& transformMatrix) override;
+    void draw(QMatrix4x4 transformMatrix) override;
     float f(float x) { return ((float)IBATy[0] * x * x) + ((float)IBATy[1] * x) +(float)IBATy[2]; }
 
 private:

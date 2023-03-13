@@ -20,6 +20,7 @@ public:
 
     Vertex(float x, float y, float z, float r, float g, float b);
     Vertex(Position position, Color color);
+    Vertex(QVector3D position, Color color);
 
     Position GetPosition() { return mPosition; }
     Color GetColor() { return mColor; }

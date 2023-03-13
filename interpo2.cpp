@@ -94,7 +94,7 @@ void InterpO2::draw()
 
 }
 
-void InterpO2::draw(QMatrix4x4& transformMatrix)
+void InterpO2::draw(QMatrix4x4 transformMatrix)
 {
     if (isActive)
     {

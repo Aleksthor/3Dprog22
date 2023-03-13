@@ -2,9 +2,11 @@
 #include "component.h"
 #include "renderwindow.h"
 #include "physicscomponent.h"
+#include "scene.h"
 
 GameObject::GameObject()
 {
+    world = new Scene();
     isActive = true;
     hasCollission = false;
     simulatePhysics = false;
@@ -20,7 +22,7 @@ void GameObject::awake()
     }
 }
 
-void GameObject::update()
+void GameObject::update(float deltaTime)
 {
     for (auto it = mComponents.begin(); it != mComponents.end();it++)
     {

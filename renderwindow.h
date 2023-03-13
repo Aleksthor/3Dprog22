@@ -51,10 +51,6 @@ public:
     std::vector<GameObject*> GetColliderObjects(int scene);
     std::vector<GameObject*> GetPhysicsObjects(int scene);
 
-    GLint GetMatrixUniform() { return mMatrixUniform;}
-    GLint GetVMatrixUniform() { return mVMatrixUniform;}
-    GLint GetPMatrixUniform() { return mPMatrixUniform;}
-
 
     void changeScene(int scene);
 
@@ -68,17 +64,14 @@ private:
     QOpenGLContext *mContext{nullptr};  //Our OpenGL context
     bool mInitialized{false};
 
-    Shader *mShaderProgram{nullptr};    //holds pointer the GLSL shader program
 
 
     QVector2D mousePos;
 
-    GLint  mMatrixUniform;                 //OpenGL reference to the Uniform in the shader program
-    GLint mPMatrixUniform;
-    GLint mVMatrixUniform;
 
     QTimer *mRenderTimer{nullptr};           //timer that drives the gameloop
     QElapsedTimer mTimeStart;               //time variable that reads the calculated FPS
+    QElapsedTimer mDeltaTime;               //time variable that reads the deltaTime
 
     MainWindow *mMainWindow{nullptr};        //points back to MainWindow to be able to put info in StatusBar
 
@@ -88,6 +81,7 @@ private:
     Scene* scene1;
     Scene* scene2;
     Scene* scene3;
+    Scene* neuralNetworkScene;
     Player* player;
 
 

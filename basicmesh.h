@@ -10,12 +10,13 @@ class BasicMesh : public GameObject
 {
 public:
     BasicMesh(VisualObject* Object, std::string name);
+    BasicMesh(VisualObject* Object, std::string name, std::string shader);
     ~BasicMesh() override;
 
     VisualObjectComponent* Mesh;
 
     void awake() override;
-    void update() override;
+    void update(float deltaTime) override;
 };
 
 #endif // BASICMESH_H

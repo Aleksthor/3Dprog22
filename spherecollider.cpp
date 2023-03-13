@@ -1,6 +1,11 @@
 #include "spherecollider.h"
 #include "gameobject.h"
 #include "scene.h"
+#include "renderwindow.h"
+#include "octahedron.h"
+#include "shader.h"
+#include "uniforms.h"
+#include "logger.h"
 
 SphereCollider::SphereCollider(GameObject* _owner, float _radius)
 {
@@ -10,6 +15,11 @@ SphereCollider::SphereCollider(GameObject* _owner, float _radius)
     owner->SetCollissionActive(true);
     owner->setCollider(this);
     owner->AddComponent(this);
+
+    renderOutline = false;
+    outline = new Octahedron(Color::White,radius, 2);
+    Octahedron* octa = (Octahedron*)outline;
+    octa->setRenderFrame(true);
 }
 
 SphereCollider::SphereCollider(GameObject* _owner, float _radius, QVector3D relativePos)
@@ -20,6 +30,12 @@ SphereCollider::SphereCollider(GameObject* _owner, float _radius, QVector3D rela
     owner->SetCollissionActive(true);
     owner->setCollider(this);
     owner->AddComponent(this);
+
+    renderOutline = false;
+    outline = new Octahedron(Color::White,radius, 2);
+    Octahedron* octa = (Octahedron*)outline;
+    octa->setRenderFrame(true);
+
 }
 
 SphereCollider::~SphereCollider()
@@ -29,11 +45,21 @@ SphereCollider::~SphereCollider()
 
 void SphereCollider::awake()
 {
+    Shader* shader = owner->getWorld()->getShader("PlainShader");
+    GLint modelUnifrom = shader->getUniform()->mMmatrixUniform;
+    outline->init(modelUnifrom);
+    //outline->scale(QVector3D(radius, radius, radius));
 
 }
 
 void SphereCollider::update()
 {
+
+    if (renderOutline)
+    {
+        outline->draw(owner->transform->getMatrix());
+    }
+
     std::unordered_map<std::string, GameObject *> objects = owner->getWorld()->getColliderObjects();
 
     for (auto it = objects.begin(); it != objects.end(); it++)

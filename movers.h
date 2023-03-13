@@ -18,7 +18,7 @@ public:
     PhysicsComponent* physics;
 
     void awake() override;
-    void update() override;
+    void update(float deltaTime) override;
 
 
 

@@ -121,7 +121,7 @@ void House::draw()
     }
 
 }
-void House::draw(QMatrix4x4& transformMatrix)
+void House::draw(QMatrix4x4 transformMatrix)
 {
     if (isActive)
     {

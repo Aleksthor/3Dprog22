@@ -6,6 +6,14 @@ Line::Line(Vertex v1, Vertex v2)
     mVertices.push_back(v2);
 }
 
+Line::Line(std::vector<QVector3D> p)
+{
+    for (size_t i{}; i < p.size(); i++)
+    {
+        mVertices.push_back(Vertex(p[i], Color::Red));
+    }
+}
+
 Line::~Line()
 {
 
@@ -52,7 +60,7 @@ void Line::draw()
     }
 }
 
-void Line::draw(QMatrix4x4 &transformMatrix)
+void Line::draw(QMatrix4x4 transformMatrix)
 {
     if (isActive)
     {
@@ -69,4 +77,22 @@ void Line::addVertex(Vertex v)
 
     glBindBuffer(GL_ARRAY_BUFFER, mVBO);
     glBufferData(GL_ARRAY_BUFFER, mVertices.size()*sizeof(Vertex), mVertices.data(), GL_STATIC_DRAW);
+}
+
+void Line::updateLine(QVector3D v1, QVector3D v2)
+{
+    mVertices[0] = Vertex(v1,mVertices[0].GetColor());
+    mVertices[1] = Vertex(v2,mVertices[1].GetColor());
+
+    init(mMatrixUniform);
+}
+void Line::updateLine(std::vector<QVector3D> p)
+{
+
+    for (size_t i{}; i < mVertices.size(); i++)
+    {
+        mVertices[i] = Vertex(p[i], Color::Red);
+    }
+
+    init(mMatrixUniform);
 }

@@ -60,7 +60,7 @@ void PointsO2::draw()
     glPointSize(4.f);
     glDrawArrays(GL_POINTS, 0, mVertices.size());
 }
-void PointsO2::draw(QMatrix4x4& transformMatrix)
+void PointsO2::draw(QMatrix4x4 transformMatrix)
 {
     if (isActive)
     {

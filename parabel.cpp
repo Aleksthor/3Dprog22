@@ -201,7 +201,7 @@ void Parabel::draw()
         glDrawArrays(GL_LINE_STRIP, 0, mVertices.size());
     }
 }
-void Parabel::draw(QMatrix4x4& transformMatrix)
+void Parabel::draw(QMatrix4x4 transformMatrix)
 {
     if (isActive)
     {

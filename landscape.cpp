@@ -114,7 +114,7 @@ void Landscape::draw()
         glDrawArrays(GL_TRIANGLES, 0, mVertices.size());
     }
 }
-void Landscape::draw(QMatrix4x4& transformMatrix)
+void Landscape::draw(QMatrix4x4 transformMatrix)
 {
     if (isActive)
     {

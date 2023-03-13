@@ -145,3 +145,14 @@ QVector3D VisualObject::getPosition3D()
     auto col = mMatrix.column(3);
     return QVector3D(col.x(), col.y(), col.z());
 }
+
+void VisualObject::setColor(Color color)
+{
+    for (size_t i{}; i < mVertices.capacity(); i++)
+    {
+        mVertices[i].SetColor(color);
+    }
+
+    init(mMatrixUniform);
+
+}

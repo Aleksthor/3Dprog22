@@ -1,14 +1,16 @@
 #include "trianglesurface.h"
+#include "logger.h"
+
 
 TriangleSurface::TriangleSurface() : VisualObject()
 {
-    //                x    y     z   r g b
-    Vertex v0{0.0,0.0,0.0, 1,0,0};    mVertices.push_back(v0);
-    Vertex v1(0.5,0.0,0.0, 0,1,0);    mVertices.push_back(v1);
-    Vertex v2{0.5,0.5,0.0, 0,0,1};    mVertices.push_back(v2);
-    Vertex v3{0.0,0.0,0.0, 0,0,1};    mVertices.push_back(v3);
-    Vertex v4{0.5,0.5,0.0, 0,1,0};    mVertices.push_back(v4);
-    Vertex v5{0.0,0.5,0.0, 1,0,0};    mVertices.push_back(v5);
+    //         x   y   z   r g b  u v
+    Vertex v0{0.0,0.0,0.0, 1,0,0, 0,0};    mVertices.push_back(v0);
+    Vertex v1(0.5,0.0,0.0, 1,0,0, 1,0);    mVertices.push_back(v1);
+    Vertex v2{0.5,0.5,0.0, 0,1,0, 1,1};    mVertices.push_back(v2);
+    Vertex v3{0.0,0.0,0.0, 0,1,0, 0,0};    mVertices.push_back(v3);
+    Vertex v4{0.5,0.5,0.0, 0,0,1, 1,1};    mVertices.push_back(v4);
+    Vertex v5{0.0,0.5,0.0, 0,0,1, 0,1};    mVertices.push_back(v5);
 }
 
 TriangleSurface::TriangleSurface(std::string filnavn) : VisualObject()
@@ -31,6 +33,7 @@ void TriangleSurface::init(GLint matrixUniform)
 
    initializeOpenGLFunctions();
 
+
    //Vertex Array Object - VAO
    glGenVertexArrays( 1, &mVAO );
    glBindVertexArray( mVAO );
@@ -46,15 +49,18 @@ void TriangleSurface::init(GLint matrixUniform)
    glVertexAttribPointer(0, 3, GL_FLOAT,GL_FALSE, sizeof(Vertex), (GLvoid*)0);
    glEnableVertexAttribArray(0);
 
-   // 2nd attribute buffer : colors
+   // 2nd attribute buffer : color
    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,  sizeof( Vertex ),  (GLvoid*)(3 * sizeof(GLfloat)) );
    glEnableVertexAttribArray(1);
 
-   //enable the matrixUniform
-   // mMatrixUniform = glGetUniformLocation( matrixUniform, "matrix" );
+   // 3rd attribute buffer : color
+   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE,  sizeof( Vertex ),  (GLvoid*)(6 * sizeof(GLfloat)) );
+   glEnableVertexAttribArray(2);
+
 
    glBindVertexArray(0);
 }
+
 
 void TriangleSurface::draw()
 {
@@ -66,7 +72,7 @@ void TriangleSurface::draw()
     }
 
 }
-void TriangleSurface::draw(QMatrix4x4& transformMatrix)
+void TriangleSurface::draw(QMatrix4x4 transformMatrix)
 {
     if (isActive)
     {

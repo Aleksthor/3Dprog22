@@ -10,13 +10,16 @@ class Octahedron : public VisualObject
 {
 public:
    Octahedron(int n=0);
+   Octahedron(Color color,float radius, int n=0);
    ~Octahedron();
 
    SphereCollider* collider;
 
    void init(GLint matrixUniform) override;
    void draw() override;
-   void draw(QMatrix4x4& transformMatrix) override;
+   void draw(QMatrix4x4 transformMatrix) override;
+
+   void setRenderFrame(bool render) { renderFrame = render; }
 
 private:
    int m_rekursjoner;
@@ -24,6 +27,10 @@ private:
    void lagTriangel(const QVector3D& v1, const QVector3D& v2, const QVector3D& v3);
    void subDivide(const QVector3D& a, const QVector3D& b, const QVector3D& c, int n);
    void oktaederUnitBall();
+   bool renderFrame;
+   bool colorDefined;
+   Color c;
+   float radius;
 };
 
 #endif // OCTAHEDRON_H

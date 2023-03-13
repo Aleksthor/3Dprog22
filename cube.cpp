@@ -108,7 +108,7 @@ void Cube::draw()
 
 }
 
-void Cube::draw(QMatrix4x4& transformMatrix)
+void Cube::draw(QMatrix4x4 transformMatrix)
 {
     if (isActive)
     {

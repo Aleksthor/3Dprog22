@@ -5,16 +5,19 @@
 #include "landscape.h"
 #include "logger.h"
 #include "scene.h"
+#include "texture.h"
 
-
-Player::Player()
+Player::Player() : GameObject()
 {
-    Mesh = new VisualObjectComponent(new Cube(), this);
+    Mesh = new VisualObjectComponent(new Cube(), this,"TextureShader");
+    Mesh->setTexture(new Texture("../3Dprog22/image.png",Mesh));
     setRootComponent(Mesh);
+    Mesh->getObject()->scale(0.5);
+    //Mesh->setIsActive(false);
 
-
-    Collider = new SphereCollider(this, 0.3f);
+    Collider = new SphereCollider(this,0.5);
     Collider->setupAttachment(Mesh);
+    Collider->setRenderOutline(true);
 
 
     setName("Player");
@@ -30,9 +33,9 @@ void Player::awake()
     GameObject::awake();
 }
 
-void Player::update()
+void Player::update(float deltaTime)
 {
-    GameObject::update();
+    GameObject::update(deltaTime);
 
     QVector3D posNow = getPosition3D();
 
@@ -53,5 +56,5 @@ void Player::update()
 
 void Player::collission(GameObject *other)
 {
-    Logger::getInstance()->logText("Player Colliding");
+    Logger::getInstance()->logText("Player Colliding with " + other->getName() );
 }

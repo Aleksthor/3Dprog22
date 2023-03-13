@@ -1,13 +1,18 @@
 #ifndef SCENE_H
 #define SCENE_H
-#include <unordered_map>
+
 #include <iostream>
 #include <QVector3D>
+#include <QElapsedTimer>
+#include <QOpenGLFunctions_4_1_Core>
+#include <unordered_map>
 
+class Shader;
 class GameObject;
 class Camera;
 
-class Scene
+
+class Scene : QOpenGLFunctions_4_1_Core
 {
 public:
     Scene();
@@ -23,12 +28,18 @@ public:
     std::unordered_map<std::string, GameObject*> getPhysicsObjects();
 
     Camera* getCamera() { return camera; }
+    Shader* getShader(std::string shader) { return Shaders[shader]; }
 
     void refreshCamera();
+    std::unordered_map<std::string, Shader*> getShaders() { return Shaders; }
+    void runProgram(std::string shader);
 
 private:
     std::unordered_map<std::string, GameObject*> gameObjects;
     Camera* camera;
+
+    QElapsedTimer DeltaTime;
+    std::unordered_map<std::string,Shader*> Shaders;    //holds pointer the GLSL shader program
 
 };
 

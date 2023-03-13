@@ -15,6 +15,7 @@ Camera::Camera()
     mRight = QVector3D::crossProduct(mUp,mForward).normalized();
 
     follow = nullptr;
+
 }
 
 void Camera::init(GLint pMatrixUniform, GLint vMatrixUniform)
@@ -36,6 +37,8 @@ void Camera::perspective(int degrees, double aspect, double nearplane, double fa
 void Camera::lookAt(const QVector3D &eye, const QVector3D &at, const QVector3D &up)
 {
     mVmatrix.setToIdentity();
+    mPosition = eye;
+    mForward = (at - eye).normalized();
     mVmatrix.lookAt(eye, at, up);
 }
 
@@ -46,28 +49,32 @@ void Camera::update()
         lookAt(follow->getPosition3D() - (mForward * 5), follow->getPosition3D(), mUp);
     }
 
-    initializeOpenGLFunctions();
-    glUniformMatrix4fv(mPmatrixUniform, 1, GL_FALSE, mPmatrix.constData());
-    glUniformMatrix4fv(mVmatrixUniform, 1, GL_FALSE, mVmatrix.constData());
+}
 
+
+void Camera::bind(GLint pMatrixUniform, GLint vMatrixUniform)
+{
+    initializeOpenGLFunctions();
+    glUniformMatrix4fv(pMatrixUniform, 1, GL_FALSE, mPmatrix.constData());
+    glUniformMatrix4fv(vMatrixUniform, 1, GL_FALSE, mVmatrix.constData());
 }
 
 void Camera::translate(float dx, float dy, float dz)
 {
     if (follow == nullptr)
     {
-        mPosition += mForward * dx;
-        mPosition -= mRight * dy;
-        mPosition += mUp * dz;
+        mPosition += mForward.normalized() * dx;
+        mPosition -= mRight.normalized() * dy;
+        mPosition += mUp.normalized() * dz;
 
         lookAt(mPosition, mPosition + mForward, mUp);
     }
 
     if (follow != nullptr)
     {
-        follow->setPosition(follow->getPosition3D() + (QVector3D(mForward.x(), mForward.y(), 0.f)) * dx);
-        follow->setPosition(follow->getPosition3D() - (mRight * dy));
-        follow->setPosition(follow->getPosition3D() + (mUp * dz));
+        follow->setPosition(follow->getPosition3D() + (QVector3D(mForward.x(), mForward.y(), 0.f).normalized()) * dx);
+        follow->setPosition(follow->getPosition3D() - (mRight.normalized() * dy));
+        follow->setPosition(follow->getPosition3D() + (mUp.normalized() * dz));
 
         lookAt(follow->getPosition3D() - (mForward * 5), follow->getPosition3D(), mUp);
         mPosition = follow->getPosition3D() - (mForward * 5);

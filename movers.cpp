@@ -6,9 +6,9 @@
 #include "line.h"
 #include "logger.h"
 
-Movers::Movers()
+Movers::Movers()  : GameObject()
 {
-    mesh = new VisualObjectComponent(new Octahedron(5), this);
+    mesh = new VisualObjectComponent(new Octahedron(5), this, "PlainShader");
     setRootComponent(mesh);
     physics = new PhysicsComponent(this);
     physics->setupAttachment(mesh);
@@ -22,7 +22,7 @@ Movers::Movers()
     position *= 25.f;
     transform->setPosition(position);
 
-    line = new VisualObjectComponent(new Line(Vertex(Position(position.x(),position.y(),position.z()), Color::Red),Vertex(Position(position.x(),position.y(),position.z()), Color::Red)),this);
+    line = new VisualObjectComponent(new Line(Vertex(Position(position.x(),position.y(),position.z()), Color::Red),Vertex(Position(position.x(),position.y(),position.z()), Color::Red)),this, "PlainShader");
     line->setupAttachment(mesh);
     line->setUseObjectSpace(false);
 
@@ -31,9 +31,9 @@ Movers::Movers()
 
 }
 
-Movers::Movers(QVector3D pos)
+Movers::Movers(QVector3D pos) : GameObject()
 {
-    mesh = new VisualObjectComponent(new Octahedron(5), this);
+    mesh = new VisualObjectComponent(new Octahedron(5), this, "PlainShader");
     setRootComponent(mesh);
     physics = new PhysicsComponent(this);
     physics->setupAttachment(mesh);
@@ -41,7 +41,7 @@ Movers::Movers(QVector3D pos)
     position = pos;
     transform->setPosition(position);
 
-    line = new VisualObjectComponent(new Line(Vertex(Position(position.x(),position.y(),position.z()), Color::Red),Vertex(Position(position.x(),position.y(),position.z()), Color::Red)),this);
+    line = new VisualObjectComponent(new Line(Vertex(Position(position.x(),position.y(),position.z()), Color::Red),Vertex(Position(position.x(),position.y(),position.z()), Color::Red)),this, "PlainShader");
     line->setupAttachment(mesh);
     line->setUseObjectSpace(false);
 
@@ -67,9 +67,9 @@ void Movers::awake()
     physics->setVelocity(QVector3D::normal(position, QVector3D(0,0,1)) * 0.1f);
 }
 
-void Movers::update()
+void Movers::update(float deltaTime)
 {
-    GameObject::update();
+    GameObject::update(deltaTime);
 
     position = getPosition3D();
     Line* l = (Line*)line->getObject();

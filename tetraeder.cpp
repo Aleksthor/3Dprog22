@@ -80,7 +80,7 @@ void Tetraeder::draw()
         glDrawArrays(GL_TRIANGLES, 0, mVertices.size());
     }
 }
-void Tetraeder::draw(QMatrix4x4& transformMatrix)
+void Tetraeder::draw(QMatrix4x4 transformMatrix)
 {
     if (isActive)
     {

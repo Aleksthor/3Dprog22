@@ -26,6 +26,12 @@ Vertex::Vertex(Position position, Color color)
 
 }
 
+Vertex::Vertex(QVector3D position, Color color)
+    : mPosition(Position(position.x(), position.y(), position.z())), mColor(color)
+{
+
+}
+
 std::ostream& operator<< (std::ostream& os, const Vertex& v) {
   os << std::fixed;
   os << "(" << v.mPosition.x << ", " << v.mPosition.y << ", " << v.mPosition.z << ") ";
