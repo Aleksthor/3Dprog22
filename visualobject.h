@@ -8,7 +8,7 @@
 #include "vertex.h"
 
 class Collider;
-
+class Texture;
 
 class VisualObject : public QOpenGLFunctions_4_1_Core{
 public:
@@ -17,6 +17,7 @@ public:
     virtual void init(GLint matrixUniform)=0;
     virtual void draw()=0;
     virtual void draw(QMatrix4x4 transformMatrix) = 0;
+
 
     void readFile(std::string filename, bool Indexing = false);
     void writeFile(std::string filename, bool Indexing = false);
@@ -33,6 +34,8 @@ public:
     QVector3D getPosition3D();
 
     void setColor(Color color);
+    QVector3D GetVertex(int index) { if ((int)mVertices.size() < index) {std::cout << "Error Vertices length: " <<  mVertices.size() << " index: " << index << std::endl; return QVector3D();} return mVertices[index].GetPosition3D(); }
+    QVector2D GetVertex2D(int index) { if ((int)mVertices.size() < index) {std::cout << "Error Vertices length: " <<  mVertices.size() << " index: " << index << std::endl; return QVector2D();} return mVertices[index].GetPosition2D(); }
 
 
 protected:
@@ -42,6 +45,8 @@ protected:
     GLuint mVBO{0};
     GLuint mIBO{0};                 		// for glDrawElements()
     GLint mMatrixUniform{0};
+
+    QVector3D ObjectColor;
 
     QMatrix4x4 mMatrix;
 

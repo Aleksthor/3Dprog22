@@ -34,12 +34,19 @@ public:
     std::unordered_map<std::string, Shader*> getShaders() { return Shaders; }
     void runProgram(std::string shader);
 
+    QVector3D getLightPos() { return lightPos; }
+
+
 private:
     std::unordered_map<std::string, GameObject*> gameObjects;
+    GameObject* cubeMap;
     Camera* camera;
+    GameObject* lightSource;
 
     QElapsedTimer DeltaTime;
     std::unordered_map<std::string,Shader*> Shaders;    //holds pointer the GLSL shader program
+
+    QVector3D lightPos;
 
 };
 

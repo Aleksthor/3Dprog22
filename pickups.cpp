@@ -7,6 +7,7 @@
 Pickups::Pickups() : GameObject()
 {
     Mesh = new VisualObjectComponent(new Octahedron(5), this,"PlainShader");
+    Mesh->setMaterial(Material::jade);
     setRootComponent(Mesh);
 
 

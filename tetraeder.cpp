@@ -3,34 +3,35 @@
 
 Tetraeder::Tetraeder() : VisualObject()
 {
-    Position A = Position(0,1,0);
-    Position B = Position(0,0,1/sqrt(3));
+    QVector3D A = QVector3D(0,1,0);
+    QVector3D B = QVector3D(0,0,1/sqrt(3));
 
-    QVector2D p1 = rotatePoint(QVector2D(0,B.z), 4*M_PI/3);
-    QVector2D p2 = rotatePoint(QVector2D(0,B.z), 2*M_PI/3);
+    QVector2D p1 = rotatePoint(QVector2D(0,B.z()), 4*M_PI/3);
+    QVector2D p2 = rotatePoint(QVector2D(0,B.z()), 2*M_PI/3);
 
-    Position C = Position(p1.x(),0,p1.y());
-    Position D = Position(p2.x(),0,p2.y());
+    QVector3D C = QVector3D(p1.x(),0,p1.y());
+    QVector3D D = QVector3D(p2.x(),0,p2.y());
+
 
     // Lag Trekant 1
-    mVertices.push_back(Vertex(B, Color::Red));
-    mVertices.push_back(Vertex(C, Color::Red));
-    mVertices.push_back(Vertex(D, Color::Red));
+    mVertices.push_back(Vertex(B, B.normalized()));
+    mVertices.push_back(Vertex(C, C.normalized()));
+    mVertices.push_back(Vertex(D, D.normalized()));
 
     // Lag Trekant 2
-    mVertices.push_back(Vertex(B, Color::Blue));
-    mVertices.push_back(Vertex(C, Color::Blue));
-    mVertices.push_back(Vertex(A, Color::Blue));
+    mVertices.push_back(Vertex(B, B.normalized()));
+    mVertices.push_back(Vertex(C, C.normalized()));
+    mVertices.push_back(Vertex(A, A.normalized()));
 
     // Lag Trekant 3
-    mVertices.push_back(Vertex(D, Color::Green));
-    mVertices.push_back(Vertex(B, Color::Green));
-    mVertices.push_back(Vertex(A, Color::Green));
+    mVertices.push_back(Vertex(D, D.normalized()));
+    mVertices.push_back(Vertex(B, B.normalized()));
+    mVertices.push_back(Vertex(A, A.normalized()));
 
     // Lag Trekant 4
-    mVertices.push_back(Vertex(C, Color::Purple));
-    mVertices.push_back(Vertex(D, Color::Purple));
-    mVertices.push_back(Vertex(A, Color::Purple));
+    mVertices.push_back(Vertex(C, C.normalized()));
+    mVertices.push_back(Vertex(D, D.normalized()));
+    mVertices.push_back(Vertex(A, A.normalized()));
 }
 
 

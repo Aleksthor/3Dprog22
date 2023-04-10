@@ -22,7 +22,7 @@ Movers::Movers()  : GameObject()
     position *= 25.f;
     transform->setPosition(position);
 
-    line = new VisualObjectComponent(new Line(Vertex(Position(position.x(),position.y(),position.z()), Color::Red),Vertex(Position(position.x(),position.y(),position.z()), Color::Red)),this, "PlainShader");
+    line = new VisualObjectComponent(new Line(Vertex(Position(position.x(),position.y(),position.z()), QVector3D()),Vertex(Position(position.x(),position.y(),position.z()), QVector3D())),this, "PlainShader");
     line->setupAttachment(mesh);
     line->setUseObjectSpace(false);
 

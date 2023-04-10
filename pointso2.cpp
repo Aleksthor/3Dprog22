@@ -2,10 +2,10 @@
 
 PointsO2::PointsO2()
 {
-    mVertices.push_back(Vertex(Position(0,-2,2), Color::Orange));
-    mVertices.push_back(Vertex(Position(0,0,4), Color::Orange));
-    mVertices.push_back(Vertex(Position(0,2,3), Color::Orange));
-    mVertices.push_back(Vertex(Position(0,5,6), Color::Orange));
+    mVertices.push_back(Vertex(Position(0,-2,2), QVector3D()));
+    mVertices.push_back(Vertex(Position(0,0,4), QVector3D()));
+    mVertices.push_back(Vertex(Position(0,2,3), QVector3D()));
+    mVertices.push_back(Vertex(Position(0,5,6), QVector3D()));
 
 //    mVertices.push_back(Vertex(Position(0,-5,7), Color::Blue));
 //    mVertices.push_back(Vertex(Position(0,-4,5), Color::Blue));

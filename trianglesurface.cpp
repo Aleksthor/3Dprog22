@@ -1,14 +1,14 @@
 #include "trianglesurface.h"
 #include "logger.h"
-
+#include "texture2d.h"
 
 TriangleSurface::TriangleSurface() : VisualObject()
 {
     //         x   y   z   r g b  u v
-    Vertex v0{0.0,0.0,0.0, 1,0,0, 0,0};    mVertices.push_back(v0);
-    Vertex v1(0.5,0.0,0.0, 1,0,0, 1,0);    mVertices.push_back(v1);
-    Vertex v2{0.5,0.5,0.0, 0,1,0, 1,1};    mVertices.push_back(v2);
-    Vertex v3{0.0,0.0,0.0, 0,1,0, 0,0};    mVertices.push_back(v3);
+    Vertex v0{0.0,0.0,0.0, 0,0,1, 0,0};    mVertices.push_back(v0);
+    Vertex v1(0.5,0.0,0.0, 0,0,1, 1,0);    mVertices.push_back(v1);
+    Vertex v2{0.5,0.5,0.0, 0,0,1, 1,1};    mVertices.push_back(v2);
+    Vertex v3{0.0,0.0,0.0, 0,0,1, 0,0};    mVertices.push_back(v3);
     Vertex v4{0.5,0.5,0.0, 0,0,1, 1,1};    mVertices.push_back(v4);
     Vertex v5{0.0,0.5,0.0, 0,0,1, 0,1};    mVertices.push_back(v5);
 }
@@ -82,5 +82,11 @@ void TriangleSurface::draw(QMatrix4x4 transformMatrix)
         glDrawArrays(GL_TRIANGLES, 0, mVertices.size());
     }
 }
+
+
+
+
+
+
 
 

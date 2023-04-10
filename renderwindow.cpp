@@ -37,7 +37,7 @@
 #include "basicmesh.h"
 #include "npco2.h"
 #include "neuralnetwork.h"
-#include "texture.h"
+#include "texture2d.h"
 
 
 RenderWindow* RenderWindow::instance;
@@ -93,21 +93,24 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
 
 
     BasicMesh* TextureSurface = new BasicMesh(new TriangleSurface(), "TextureSurface", "TextureShader");
-    TextureSurface->Mesh->setTexture(new Texture("../3Dprog22/image.png", TextureSurface->Mesh));
-    neuralNetworkScene->addObject(TextureSurface, "TextureSurface");
-    neuralNetworkScene->getObject("TextureSurface")->move(QVector3D(5,0,0));
-    neuralNetworkScene->getObject("TextureSurface")->rotate(90,QVector3D(0,1,0));
-    neuralNetworkScene->getObject("TextureSurface")->rotate(270,QVector3D(0,0,1));
-    neuralNetworkScene->getObject("TextureSurface")->rotate(180,QVector3D(0,1,0));
-    neuralNetworkScene->getObject("TextureSurface")->scale(3);
+    TextureSurface->Mesh->setTexture(new Texture2D("../3Dprog22/cloudy/right.jpg", TextureSurface->Mesh));
+    scene1->addObject(TextureSurface, "TextureSurface");
+    scene1->getObject("TextureSurface")->move(QVector3D(5,0,2));
+    scene1->getObject("TextureSurface")->rotate(90,QVector3D(0,1,0));
+    scene1->getObject("TextureSurface")->rotate(270,QVector3D(0,0,1));
+    scene1->getObject("TextureSurface")->rotate(180,QVector3D(0,1,0));
+    scene1->getObject("TextureSurface")->scale(3);
 
     scene1->addObject(player, "Player");
-    scene1->addObject(new BasicMesh(new Landscape(QVector2D(-10,-10), QVector2D(10,10)), "Landscape"), "Landscape");
+    scene1->addObject(new BasicMesh(new Landscape("../3Dprog22/cloudy/heightmap.jpg"), "Landscape"), "Landscape");
     GameObject* house = scene1->addObject(new BasicMesh(new House(), "House"), "House");
     scene1->addObject(new NPCO2(), "NPC");
     scene1->addObject(new BasicMesh(new Parabel(), "Parabel"), "Parabel");
     scene1->addObject(new Door(), "Door");
     scene1->getCamera()->setFollowGameObject(player);
+
+    VisualObjectComponent* LandscapeVO = (VisualObjectComponent*)scene1->getObject("Landscape")->getRootComponent();
+    LandscapeVO->setMaterial(Material::redPlastic);
 
     for (int i{}; i < 10; i++)
     {
@@ -129,7 +132,6 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     }
 
     scene2->addObject(new BasicMesh(new Landscape(QVector2D(-10,-10), QVector2D(10,10)), "Landscape"), "Landscape");
-    scene2->getCamera()->setFollowGameObject(player);
 
     GameObject* wall1 = scene2->addObject(new BasicMesh(new Cube(), "Wall1"), "Wall1");
     GameObject* wall2 = scene2->addObject(new BasicMesh(new Cube(), "Wall2"), "Wall2");
@@ -161,7 +163,7 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     house->scale(3);
 
 
-    currentScene = neuralNetworkScene;
+    currentScene = scene1;
 
 }
 

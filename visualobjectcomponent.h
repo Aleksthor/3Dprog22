@@ -2,7 +2,9 @@
 #define VISUALOBJECTCOMPONENT_H
 
 #include "component.h"
+#include "Structures.h"
 #include <QMatrix4x4>
+#include "material.h"
 
 class VisualObject;
 class Texture;
@@ -25,6 +27,9 @@ public:
     void setUseObjectSpace(bool input) { useObjectSpace = input; }
     void setUsingTexture(bool input) { usingTexture = input; }
     void setTexture(Texture* tex);
+    void setMaterial(Material material);
+    void setColor(QVector3D color);
+    void setColor(Color color);
 
 private:
     void init(GLint mMatrixUniform);
@@ -37,6 +42,7 @@ private:
     bool useObjectSpace;
     bool usingTexture;
     Texture* texture;
+    Material material;
 };
 
 #endif // VISUALOBJECTCOMPONENT_H

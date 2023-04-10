@@ -137,3 +137,8 @@ void Camera::setForward(QVector3D at)
     lookAt(mPosition, mPosition + mForward, mUp);
 }
 
+void Camera::uploadPos(GLint uniform)
+{
+    glUniform3f(uniform, GetPosition3D().x(),GetPosition3D().y(),GetPosition3D().z());
+}
+

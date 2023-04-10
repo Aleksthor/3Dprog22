@@ -150,7 +150,7 @@ void VisualObject::setColor(Color color)
 {
     for (size_t i{}; i < mVertices.capacity(); i++)
     {
-        mVertices[i].SetColor(color);
+        mVertices[i].SetNormal(QVector3D(color.r,color.g,color.b));
     }
 
     init(mMatrixUniform);

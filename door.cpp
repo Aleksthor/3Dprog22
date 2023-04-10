@@ -9,6 +9,7 @@
 Door::Door() : GameObject()
 {
     Mesh = new VisualObjectComponent(new Cube(), this, "PlainShader");
+    Mesh->setMaterial(Material::gold);
     setRootComponent(Mesh);
     transform->scale(QVector3D(1.f,0.1f,2.f));
 

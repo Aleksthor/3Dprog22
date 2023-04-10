@@ -16,32 +16,39 @@ class Vertex
 public:
     Vertex();
     Vertex(float x, float y, float z, float r, float g, float b, float u, float v);
-    Vertex(Position position, Color color, UV uv);
+    Vertex(Position position, QVector3D normal, UV uv);
 
     Vertex(float x, float y, float z, float r, float g, float b);
-    Vertex(Position position, Color color);
+    Vertex(Position position, QVector3D normal);
+    Vertex(Position position, Color normal);
+    Vertex(QVector3D position, QVector3D normal);
+    Vertex(QVector3D position, QVector3D normal, UV uv);
     Vertex(QVector3D position, Color color);
 
     Position GetPosition() { return mPosition; }
-    Color GetColor() { return mColor; }
+    QVector3D GetPosition3D() { return QVector3D(mPosition.x,mPosition.y,mPosition.z); }
+    QVector2D GetPosition2D() { return QVector2D(mPosition.x,mPosition.y); }
+    QVector3D GetColor() { return mNormal; }
+    QVector3D GetNormal() { return mNormal; }
     UV GetUV() { return mUV; }
 
     float GetX() { return mPosition.x; }
     float GetY() { return mPosition.y; }
     float GetZ() { return mPosition.z; }
 
-    float GetR() { return mColor.r; }
-    float GetG() { return mColor.g; }
-    float GetB() { return mColor.b; }
+    float GetNX() { return mNormal.x(); }
+    float GetNY() { return mNormal.y(); }
+    float GetNZ() { return mNormal.z(); }
 
     float GetU() { return mUV.u; }
     float GetV() { return mUV.v; }
 
+
     void SetPosition(float x, float y, float z) { mPosition = Position(x,y,z); }
     void SetPosition(Position position) { mPosition = position; }
 
-    void SetColor(float r, float g, float b) { mColor = Color(r,g,b); }
-    void SetColor(Color color) { mColor = color; }
+
+    void SetNormal(QVector3D normal) { mNormal = normal; }
 
     void SetUV(float u, float v) { mUV = UV(u,v); }
     void SetUV(UV uv) { mUV = uv; }
@@ -51,9 +58,9 @@ public:
     void SetY(float y) { mPosition.y = y; }
     void SetZ(float z) { mPosition.z = z; }
 
-    void SetR(float r) { mColor.r = r; }
-    void SetG(float g) { mColor.g = g; }
-    void SetB(float b) { mColor.b = b; }
+    void SetNX(float nx) { mNormal.setX(nx); }
+    void SetNY(float ny) { mNormal.setX(ny); }
+    void SetNZ(float nz) { mNormal.setX(nz); }
 
     void SetU(float u) { mUV.u = u; }
     void SetV(float v) { mUV.v = v; }
@@ -61,7 +68,9 @@ public:
 
 private:
     Position mPosition;
-    Color mColor;
+    QVector3D mNormal;
     UV mUV;
+
+
 };
 #endif // VERTEX_H

@@ -296,6 +296,8 @@ public:
     static const Color Orange;
     static const Color White;
 
+    static const Color Emerald;
+
 
     Color operator*=(const Color& color)
     {

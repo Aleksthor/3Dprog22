@@ -10,7 +10,7 @@ class Octahedron : public VisualObject
 {
 public:
    Octahedron(int n=0);
-   Octahedron(Color color,float radius, int n=0);
+   Octahedron(float radius, int n=0);
    ~Octahedron();
 
    SphereCollider* collider;

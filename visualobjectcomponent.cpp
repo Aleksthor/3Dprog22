@@ -6,6 +6,8 @@
 #include "shader.h"
 #include "uniforms.h"
 #include "texture.h"
+#include "material.h"
+#include "logger.h"
 
 VisualObjectComponent::VisualObjectComponent(VisualObject *object, GameObject* owner, std::string shader)
     : mObject(object), shaderName(shader)
@@ -15,6 +17,7 @@ VisualObjectComponent::VisualObjectComponent(VisualObject *object, GameObject* o
     useObjectSpace = true;
     usingTexture = false;
     texture = nullptr;
+    material = Material();
 }
 
 
@@ -46,7 +49,11 @@ void VisualObjectComponent::awake()
 void VisualObjectComponent::update()
 {
     GetOwner()->getWorld()->runProgram(shaderName);
-
+    if (shaderName == "PlainShader" || shaderName == "LightShader")
+    {
+        GetOwner()->getWorld()->getShader(shaderName)->setLightColor(QVector3D(1.f,1.f,1.f));
+        GetOwner()->getWorld()->getShader(shaderName)->uploadMaterial(material);
+    }
 
     if (IsActive())
         render(GetOwner()->transform->getMatrix());
@@ -71,6 +78,21 @@ void VisualObjectComponent::setTexture(Texture *tex)
     usingTexture = true;
 }
 
+void VisualObjectComponent::setMaterial(Material _material)
+{
+    material = _material;
+}
+
+void VisualObjectComponent::setColor(QVector3D color)
+{
+    material.color = color;
+}
+
+void VisualObjectComponent::setColor(Color color)
+{
+    material.color = QVector3D(color.r,color.g,color.b);
+}
+
 void VisualObjectComponent::init(GLint matrixUniform)
 {
     if(mObject != nullptr)
@@ -86,44 +108,13 @@ void VisualObjectComponent::init(GLint matrixUniform)
 void VisualObjectComponent::render(QMatrix4x4& transformMatrix)
 {
 
-    if (usingTexture)
+    if(mObject != nullptr)
     {
-        if (useObjectSpace)
+        if (texture != nullptr)
         {
-            if(mObject != nullptr)
-            {
-                if (texture != nullptr)
-                {
-                    texture->update( GetOwner()->getWorld()->getShader(shaderName)->getUniform()->mTextureSampler);
-                }
-
-                mObject->draw(transformMatrix);
-            }
+            texture->update(GetOwner()->getWorld()->getShader(shaderName)->getUniform()->mTextureSampler);
         }
-        else
-        {
-            if(mObject != nullptr)
-            {
-                mObject->draw();
-            }
-        }
-    }
-    else
-    {
-        if (useObjectSpace)
-        {
-            if(mObject != nullptr)
-            {
-                mObject->draw(transformMatrix);
-            }
-        }
-        else
-        {
-            if(mObject != nullptr)
-            {
-                mObject->draw();
-            }
-        }
+        mObject->draw(transformMatrix);
     }
 
 

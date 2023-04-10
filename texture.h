@@ -4,18 +4,19 @@
 #include <iostream>
 #include <QOpenGLFunctions_4_1_Core>
 
+
 class VisualObjectComponent;
 
-class Texture : QOpenGLFunctions_4_1_Core
+class Texture : public QOpenGLFunctions_4_1_Core
 {
 public:
-    Texture(std::string fileLoc, VisualObjectComponent* owner);
+    Texture();
+    virtual ~Texture() {};
 
-    void init();
-    void update(GLint textureUniform);
+    virtual void init() = 0;
+    virtual void update(GLint textureUniform) = 0;
 
-
-private:
+public:
     VisualObjectComponent* mOwner;
     std::string fileLocation;
     unsigned int texture;

@@ -5,6 +5,7 @@ CONFIG      += c++17
 
 TARGET      = 3D-programmering
 
+
 SOURCES += main.cpp \
     Structures.cpp \
     basicmesh.cpp \
@@ -12,6 +13,7 @@ SOURCES += main.cpp \
     collider.cpp \
     component.cpp \
     cube.cpp \
+    cubemap.cpp \
     curveo1.cpp \
     disc.cpp \
     door.cpp \
@@ -22,7 +24,9 @@ SOURCES += main.cpp \
     line.cpp \
     logger.cpp \
     mainwindow.cpp \
+    material.cpp \
     movers.cpp \
+    mymath.cpp \
     neuralnetwork.cpp \
     npco2.cpp \
     octahedron.cpp \
@@ -39,9 +43,11 @@ SOURCES += main.cpp \
     scene.cpp \
     shader.cpp \
     spherecollider.cpp \
+    staticmesh.cpp \
     surfaceo1.cpp \
     tetraeder.cpp \
     texture.cpp \
+    texture2d.cpp \
     transform.cpp \
     trianglesurface.cpp \
     vertex.cpp \
@@ -57,6 +63,7 @@ HEADERS += \
     collider.h \
     component.h \
     cube.h \
+    cubemap.h \
     curveo1.h \
     disc.h \
     door.h \
@@ -67,7 +74,9 @@ HEADERS += \
     line.h \
     logger.h \
     mainwindow.h \
+    material.h \
     movers.h \
+    mymath.h \
     neuralnetwork.h \
     neuron.h \
     npco2.h \
@@ -85,10 +94,12 @@ HEADERS += \
     scene.h \
     shader.h \
     spherecollider.h \
+    staticmesh.h \
     stb_image.h \
     surfaceo1.h \
     tetraeder.h \
     texture.h \
+    texture2d.h \
     transform.h \
     trianglesurface.h \
     uniforms.h \
@@ -102,6 +113,10 @@ FORMS += \
     mainwindow.ui
 
 DISTFILES += \
+    cubemap.frag \
+    cubemap.vert \
+    lightShader.frag \
+    lightShader.vert \
     plainshader.frag \
     plainshader.vert \
     textureshader.frag \

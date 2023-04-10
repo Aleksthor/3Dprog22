@@ -6,7 +6,6 @@
 Cube::Cube() : VisualObject()
 {
 
-   // -y veggen
    mVertices.push_back(Vertex{-1,-1,-1,1,0,0});
    mVertices.push_back(Vertex{1,-1,1,1,0,0});
    mVertices.push_back(Vertex{-1,-1,1,1,0,0});
@@ -54,6 +53,13 @@ Cube::Cube() : VisualObject()
    mVertices.push_back(Vertex{1,1,-1,0,1,1});
    mVertices.push_back(Vertex{1,1,1,0,1,1});
 
+   for(size_t i{}; i < mVertices.capacity();i++)
+   {
+        // Bad name, set Normal
+        QVector3D normal = QVector3D(mVertices[i].GetPosition().x,mVertices[i].GetPosition().y,mVertices[i].GetPosition().z);
+        normal.normalize();
+        mVertices[i].SetNormal(normal);
+   }
 }
 
 
@@ -89,6 +95,10 @@ void Cube::init(GLint matrixUniform)
    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,  sizeof( Vertex ),  (GLvoid*)(3 * sizeof(GLfloat)) );
    glEnableVertexAttribArray(1);
 
+   // 3rd attribute buffer : colors
+   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE,  sizeof( Vertex ),  (GLvoid*)(6 * sizeof(GLfloat)) );
+   glEnableVertexAttribArray(2);
+
    //enable the matrixUniform
    // mMatrixUniform = glGetUniformLocation( matrixUniform, "matrix" );
 
@@ -100,7 +110,6 @@ void Cube::draw()
 
     if (isActive)
     {
-
         glBindVertexArray( mVAO );
         glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
         glDrawArrays(GL_TRIANGLES, 0, mVertices.size());

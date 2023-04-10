@@ -17,7 +17,7 @@ SphereCollider::SphereCollider(GameObject* _owner, float _radius)
     owner->AddComponent(this);
 
     renderOutline = false;
-    outline = new Octahedron(Color::White,radius, 2);
+    outline = new Octahedron(radius, 2);
     Octahedron* octa = (Octahedron*)outline;
     octa->setRenderFrame(true);
 }
@@ -32,7 +32,7 @@ SphereCollider::SphereCollider(GameObject* _owner, float _radius, QVector3D rela
     owner->AddComponent(this);
 
     renderOutline = false;
-    outline = new Octahedron(Color::White,radius, 2);
+    outline = new Octahedron(radius, 2);
     Octahedron* octa = (Octahedron*)outline;
     octa->setRenderFrame(true);
 
@@ -46,6 +46,7 @@ SphereCollider::~SphereCollider()
 void SphereCollider::awake()
 {
     Shader* shader = owner->getWorld()->getShader("PlainShader");
+    shader->uploadMaterial(Material::whitePlastic);
     GLint modelUnifrom = shader->getUniform()->mMmatrixUniform;
     outline->init(modelUnifrom);
     //outline->scale(QVector3D(radius, radius, radius));
@@ -57,6 +58,8 @@ void SphereCollider::update()
 
     if (renderOutline)
     {
+        Shader* shader = owner->getWorld()->getShader("PlainShader");
+        shader->uploadMaterial(Material::whitePlastic);
         outline->draw(owner->transform->getMatrix());
     }
 

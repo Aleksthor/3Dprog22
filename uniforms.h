@@ -17,9 +17,19 @@ public:
 
     }
 
+
     GLint mMmatrixUniform;
     GLint mVmatrixUniform;
     GLint mPmatrixUniform;
     GLint mTextureSampler;
+
+    GLint mObjectColor;
+    GLint mLightColor;
+    GLint mLightPos;
+    GLint mViewPos;
+    GLint mAmbientUniform;
+    GLint mDiffuseUniform;
+    GLint mSpecularUniform;
+    GLint mShininessUniform;
 };
 #endif // UNIFORMS_H

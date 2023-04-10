@@ -16,7 +16,6 @@ public:
    void draw() override;
    void draw(QMatrix4x4 transformMatrix) override;
 
-
 };
 
 #endif // TRIANGLESURFACE_H

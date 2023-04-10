@@ -4,6 +4,7 @@
 #include <iostream>
 #include <QVector3D>
 #include "transform.h"
+#include "material.h"
 
 class Component;
 class Collider;

@@ -13,13 +13,12 @@ Octahedron::Octahedron(int n) : VisualObject(),
     oktaederUnitBall();
 }
 
-Octahedron::Octahedron(Color color, float r, int n) : VisualObject(),
+Octahedron::Octahedron(float r, int n) : VisualObject(),
      m_rekursjoner(n), m_indeks(0)
 {
     isActive = true;
     radius = r;
-    c = color;
-    colorDefined = true;
+    colorDefined = false;
     renderFrame = false;
     mVertices.reserve(3 * 8 * pow(4, m_rekursjoner));
     oktaederUnitBall();
@@ -44,11 +43,11 @@ const QVector3D& v3)
    }
    else
    {
-       Vertex v = Vertex{v1.x(), v1.y(), v1.z(), v1.x(), v1.y(), v1.z()};
+       Vertex v = Vertex{v1.x(), v1.y(), v1.z(), v1.normalized().x(), v1.normalized().y(), v1.normalized().z()};
        mVertices.push_back(v);
-       v = Vertex{v2.x(), v2.y(), v2.z(), v2.x(), v2.y(), v2.z()};
+       v = Vertex{v2.x(), v2.y(), v2.z(), v2.normalized().x(), v2.normalized().y(), v2.normalized().z()};
        mVertices.push_back(v);
-       v = Vertex{v3.x(), v3.y(), v3.z(), v3.x(), v3.y(), v3.z()};
+       v = Vertex{v3.x(), v3.y(), v3.z(), v3.normalized().x(), v3.normalized().y(), v3.normalized().z()};
        mVertices.push_back(v);
    }
 

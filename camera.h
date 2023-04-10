@@ -23,6 +23,8 @@ public:
    void setPosition(QVector3D position);
    void setForward(QVector3D at);
 
+   void uploadPos(GLint uniform);
+
 
    QVector3D GetForwardVector3D() { return mForward; }
    Vector3 GetForwardVector() { return Vector3(mForward.x(), mForward.y(), mForward.z());}

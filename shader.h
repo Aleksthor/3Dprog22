@@ -4,6 +4,7 @@
 #include <QOpenGLFunctions_4_1_Core>
 
 class Uniforms;
+class Material;
 
 //#include "GL/glew.h" //We use QOpenGLFunctions instead, so no need for Glew (or GLAD)!
 
@@ -25,6 +26,16 @@ public:
     GLuint getProgram() const;
     void setUniform(Uniforms* uni) { uniform = uni; }
     Uniforms* getUniform() { return uniform; }
+
+    void setObjectColorUniform(GLint objectColorUniform);
+    void setLightColorUniform(GLint LightColorUniform);
+    void setLightPosUniform(GLint lightPosUniform);
+
+    void setObjectColor(QVector3D color);
+    void setLightColor(QVector3D color);
+    void setLightPos(QVector3D lightPos);
+    void setViewPos(QVector3D viewpos);
+    void uploadMaterial(const Material& material);
 
 private:
     ///The int OpenGL gives as a reference to this shader

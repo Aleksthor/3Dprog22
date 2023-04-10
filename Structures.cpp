@@ -179,7 +179,7 @@ const Color Color::Blue(0,0,1);
 const Color Color::Purple(1,0,1);
 const Color Color::Orange(1,0.6f,0);
 const Color Color::White(1,1,1);
-
+const Color Color::Emerald(31.4f/255.f,78.4f/255.f,47.1f/255.f);
 
 
 Interp::Interp(std::vector<QVector3D> _points)

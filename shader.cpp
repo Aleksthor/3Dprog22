@@ -3,6 +3,9 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include "material.h"
+#include "uniforms.h"
+#include <QVector3D>
 
 //#include "GL/glew.h" - using QOpenGLFunctions instead
 
@@ -106,5 +109,50 @@ void Shader::use()
 
 GLuint Shader::getProgram() const
 {
-    return mProgram;
+    return this->mProgram;
+}
+
+
+void Shader::setObjectColorUniform(GLint objectLightUniform)
+{
+    uniform->mObjectColor = objectLightUniform;
+}
+
+void Shader::setLightColorUniform(GLint objectLightUniform)
+{
+    uniform->mLightColor = objectLightUniform;
+}
+
+void Shader::setLightPosUniform(GLint lightPosUniform)
+{
+    uniform->mLightPos = lightPosUniform;
+}
+
+void Shader::setObjectColor(QVector3D color)
+{
+    glUniform3f(uniform->mObjectColor, color.x(),color.y(),color.z());
+}
+
+void Shader::setLightColor(QVector3D color)
+{
+    glUniform3f(uniform->mLightColor, color.x(),color.y(),color.z());
+}
+
+void Shader::setLightPos(QVector3D lightPos)
+{
+    glUniform3f(uniform->mLightPos, lightPos.x(),lightPos.y(),lightPos.z());
+}
+
+void Shader::setViewPos(QVector3D viewpos)
+{
+    glUniform3f(uniform->mViewPos, viewpos.x(),viewpos.y(),viewpos.z());
+}
+
+void Shader::uploadMaterial(const Material& material)
+{
+    glUniform3f(uniform->mObjectColor, material.color.x(),material.color.y(),material.color.z());
+    glUniform3f(uniform->mAmbientUniform, material.ambient.x(),material.ambient.y(),material.ambient.z());
+    glUniform3f(uniform->mDiffuseUniform, material.diffuse.x(),material.diffuse.y(),material.diffuse.z());
+    glUniform3f(uniform->mSpecularUniform, material.specular.x(),material.specular.y(),material.specular.z());
+    glUniform1f(uniform->mShininessUniform, material.shininess);
 }

@@ -20,10 +20,17 @@ public:
     void rotate(float angle, QVector3D vector);
     float scale(float _scale);
     void scale(QVector3D _scale);
+    void setX(float x);
+    void setY(float y);
+    void setZ(float z);
 
+    float getX();
+    float getY();
+    float getZ();
 
     std::pair<float,float> getPosition();
     QVector3D getPosition3D();
+    QVector2D getPosition2D();
 
     QMatrix4x4& getMatrix() { return mMatrix; }
 
