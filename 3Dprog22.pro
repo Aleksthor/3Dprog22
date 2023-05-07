@@ -9,6 +9,7 @@ TARGET      = 3D-programmering
 SOURCES += main.cpp \
     Structures.cpp \
     basicmesh.cpp \
+    bspline.cpp \
     camera.cpp \
     collider.cpp \
     component.cpp \
@@ -59,6 +60,7 @@ SOURCES += main.cpp \
 HEADERS += \
     Structures.h \
     basicmesh.h \
+    bspline.h \
     camera.h \
     collider.h \
     component.h \

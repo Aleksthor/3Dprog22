@@ -6,6 +6,15 @@ PointsO2::PointsO2()
     mVertices.push_back(Vertex(Position(0,0,4), QVector3D()));
     mVertices.push_back(Vertex(Position(0,2,3), QVector3D()));
     mVertices.push_back(Vertex(Position(0,5,6), QVector3D()));
+}
+
+PointsO2::PointsO2(std::vector<QVector3D> points)
+{
+    for (int i = 0; i < (int)points.size(); i++)
+    {
+        mVertices.push_back(Vertex(points[i], QVector3D()));
+    }
+
 
 //    mVertices.push_back(Vertex(Position(0,-5,7), Color::Blue));
 //    mVertices.push_back(Vertex(Position(0,-4,5), Color::Blue));
@@ -57,7 +66,7 @@ void PointsO2::draw()
 {
     glBindVertexArray( mVAO );
     glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
-    glPointSize(4.f);
+    glPointSize(7.f);
     glDrawArrays(GL_POINTS, 0, mVertices.size());
 }
 void PointsO2::draw(QMatrix4x4 transformMatrix)
@@ -67,6 +76,7 @@ void PointsO2::draw(QMatrix4x4 transformMatrix)
         transformMatrix *= mMatrix;
         glBindVertexArray( mVAO );
         glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, transformMatrix.constData());
+        glPointSize(7.f);
         glDrawArrays(GL_POINTS, 0, mVertices.size());
     }
 }

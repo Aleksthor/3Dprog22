@@ -38,6 +38,8 @@
 #include "npco2.h"
 #include "neuralnetwork.h"
 #include "texture2d.h"
+#include "bspline.h"
+#include "pointso2.h"
 
 
 RenderWindow* RenderWindow::instance;
@@ -109,6 +111,19 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     scene1->addObject(new Door(), "Door");
     scene1->getCamera()->setFollowGameObject(player);
 
+
+    std::vector<QVector2D> points {QVector2D(5,2), QVector2D(2,3),QVector2D(3,6),QVector2D(4,3), QVector2D(5,4),QVector2D(3,8),QVector2D(5,4)};
+    std::vector<QVector3D> points3D = std::vector<QVector3D>();
+
+    for(int i{}; i < (int)points.size(); i++)
+    {
+        points3D.push_back(QVector3D(points[i].x(), 5, points[i].y()));
+    }
+    std::vector<float> knots {0,0,0,0,1,2,3,4,5,6,7};
+
+    scene1->addObject(new BasicMesh(new BSpline(points, knots),"BSpline"),"BSpline");
+    scene1->addObject(new BasicMesh(new PointsO2(points3D),"Points"),"Points");
+
     VisualObjectComponent* LandscapeVO = (VisualObjectComponent*)scene1->getObject("Landscape")->getRootComponent();
     LandscapeVO->setMaterial(Material::redPlastic);
 
@@ -132,7 +147,8 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     }
 
     scene2->addObject(new BasicMesh(new Landscape(QVector2D(-10,-10), QVector2D(10,10)), "Landscape"), "Landscape");
-
+    scene2->addObject(new Player(), "Player");
+    scene2->getCamera()->setFollowGameObject(scene2->getObject(("Player")));
     GameObject* wall1 = scene2->addObject(new BasicMesh(new Cube(), "Wall1"), "Wall1");
     GameObject* wall2 = scene2->addObject(new BasicMesh(new Cube(), "Wall2"), "Wall2");
     GameObject* wall3 = scene2->addObject(new BasicMesh(new Cube(), "Wall3"), "Wall3");

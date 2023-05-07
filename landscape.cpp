@@ -139,8 +139,8 @@ Landscape::Landscape(std::string fileLocation)
             {
                 z +=data[a + (b * Width) * nrChannels + i ];
             }
-            z /= nrChannels * 4;
-            mVertices.push_back(Vertex(QVector3D(x,y,z), QVector3D(0,0,1), UV(x,y))); // UV's wrong
+            z /= nrChannels;
+            mVertices.push_back(Vertex(QVector3D(x,y,(z*0.125f) - 14.f), QVector3D(0,0,1), UV(x,y))); // UV's wrong
         }
     }
 

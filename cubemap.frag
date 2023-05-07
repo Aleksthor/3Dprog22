@@ -5,5 +5,5 @@ in vec3 textureDir;              //color received from the pipeline (and vertex 
 uniform samplerCube textureSampler;
 
 void main() {
-   fragmentColor = texture(textureSampler, textureDir);
+    fragmentColor = texture(textureSampler, textureDir);
 }

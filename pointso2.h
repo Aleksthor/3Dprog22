@@ -7,6 +7,7 @@ class PointsO2 : public VisualObject
 {
 public:
     PointsO2();
+    PointsO2(std::vector<QVector3D> points);
     ~PointsO2() override;
 
 
